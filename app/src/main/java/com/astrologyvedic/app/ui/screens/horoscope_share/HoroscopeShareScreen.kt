@@ -16,16 +16,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.astrologyvedic.app.ui.components.*
 import com.astrologyvedic.app.ui.theme.*
+import com.astrologyvedic.app.util.ShareUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HoroscopeShareScreen(navController: NavController, viewModel: HoroscopeShareViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -112,7 +115,20 @@ fun HoroscopeShareScreen(navController: NavController, viewModel: HoroscopeShare
 
                 // Share Button
                 Button(
-                    onClick = { /* TODO: Share intent */ },
+                    onClick = {
+                        val shareText = buildString {
+                            appendLine("Today's Horoscope - ${uiState.rashi}")
+                            appendLine()
+                            appendLine(uiState.prediction)
+                            if (uiState.luckyNumber.isNotBlank()) {
+                                appendLine()
+                                appendLine("Lucky Number: ${uiState.luckyNumber}")
+                            }
+                            appendLine()
+                            appendLine("- Vedic Astrology App")
+                        }
+                        ShareUtils.shareText(context, "Today's Horoscope", shareText)
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),

@@ -194,13 +194,13 @@ fun ServicesScreen(navController: NavController) {
                     )
                 },
                 actions = {
-                    IconButton(onClick = { /* TODO: search */ }) {
+                    IconButton(onClick = { navController.navigate(Routes.Explore.route) }) {
                         Icon(
                             imageVector = Icons.Outlined.Search,
                             contentDescription = "Search"
                         )
                     }
-                    IconButton(onClick = { /* TODO: filter */ }) {
+                    IconButton(onClick = { navController.navigate(Routes.Explore.route) }) {
                         Icon(
                             imageVector = Icons.Outlined.FilterList,
                             contentDescription = "Filter"

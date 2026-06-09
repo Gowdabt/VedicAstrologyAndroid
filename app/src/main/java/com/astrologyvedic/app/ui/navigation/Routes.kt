@@ -8,8 +8,8 @@ sealed class Routes(val route: String) {
     data object Calculators : Routes("calculators")
     data object Profile : Routes("profile")
 
-    // Legacy aliases (keep for backward compat)
-    data object Explore : Routes("services")
+    // Browse / tools
+    data object Explore : Routes("explore")
     data object Tools : Routes("calculators")
 
     // Core features

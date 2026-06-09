@@ -109,7 +109,7 @@ fun HomeScreen(navController: NavController) {
                     )
                 },
                 actions = {
-                    IconButton(onClick = { /* TODO: Search */ }) {
+                    IconButton(onClick = { navController.navigate(Routes.Explore.route) }) {
                         Icon(Icons.Outlined.Search, contentDescription = "Search")
                     }
                     IconButton(onClick = { navController.navigate(Routes.Settings.route) }) {

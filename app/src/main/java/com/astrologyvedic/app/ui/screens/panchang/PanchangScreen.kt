@@ -46,12 +46,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.astrologyvedic.app.ui.components.ErrorState
 import com.astrologyvedic.app.ui.components.LoadingState
 import com.astrologyvedic.app.ui.components.ResultCard
 import com.astrologyvedic.app.ui.theme.Warning
+import com.astrologyvedic.app.util.ShareUtils
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -64,6 +66,7 @@ fun PanchangScreen(
     viewModel: PanchangViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
     var showDatePicker by remember { mutableStateOf(false) }
 
     Column(
@@ -79,7 +82,25 @@ fun PanchangScreen(
                 }
             },
             actions = {
-                IconButton(onClick = { /* TODO: Share */ }) {
+                IconButton(onClick = {
+                    uiState.panchangData?.let { data ->
+                        val shareText = buildString {
+                            appendLine("Panchang - ${uiState.selectedDate}")
+                            appendLine()
+                            appendLine("Tithi: ${data.tithi}")
+                            appendLine("Nakshatra: ${data.nakshatra}")
+                            appendLine("Yoga: ${data.yoga}")
+                            appendLine("Karana: ${data.karana}")
+                            appendLine()
+                            appendLine("Sunrise: ${data.sunrise}")
+                            appendLine("Sunset: ${data.sunset}")
+                            appendLine("Rahu Kaal: ${data.rahuKaal}")
+                            appendLine()
+                            appendLine("- Vedic Astrology App")
+                        }
+                        ShareUtils.shareText(context, "Panchang", shareText)
+                    }
+                }) {
                     Icon(Icons.Default.Share, contentDescription = "Share", tint = MaterialTheme.colorScheme.primary)
                 }
             },

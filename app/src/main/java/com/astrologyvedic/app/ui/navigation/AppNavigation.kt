@@ -79,6 +79,7 @@ import com.astrologyvedic.app.ui.screens.profile.LanguageScreen
 import com.astrologyvedic.app.ui.screens.profile.SavedChartsScreen
 import com.astrologyvedic.app.ui.screens.profile.ReportHistoryScreen
 import com.astrologyvedic.app.ui.screens.profile.EditProfileScreen
+import com.astrologyvedic.app.ui.screens.explore.ExploreScreen
 
 @Composable
 fun AppNavigation(
@@ -328,6 +329,9 @@ fun AppNavigation(
         }
         composable(Routes.EditProfile.route) {
             EditProfileScreen(navController = navController)
+        }
+        composable(Routes.Explore.route) {
+            ExploreScreen(navController = navController)
         }
     }
 }
