@@ -47,16 +47,6 @@ import androidx.navigation.NavController
 import com.astrologyvedic.app.ui.components.ErrorState
 import com.astrologyvedic.app.ui.components.LoadingState
 import com.astrologyvedic.app.ui.components.ResultCard
-import com.astrologyvedic.app.ui.theme.BorderDark
-import com.astrologyvedic.app.ui.theme.Cosmic950
-import com.astrologyvedic.app.ui.theme.Saffron400
-import com.astrologyvedic.app.ui.theme.Saffron500
-import com.astrologyvedic.app.ui.theme.SurfaceCard
-import com.astrologyvedic.app.ui.theme.SurfaceCardElevated
-import com.astrologyvedic.app.ui.theme.SurfaceDark
-import com.astrologyvedic.app.ui.theme.TextPrimary
-import com.astrologyvedic.app.ui.theme.TextSecondary
-import com.astrologyvedic.app.ui.theme.TextTertiary
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -69,23 +59,23 @@ fun PathfinderScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(SurfaceDark)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         TopAppBar(
-            title = { Text("Pathfinder", color = TextPrimary) },
+            title = { Text("Pathfinder", color = MaterialTheme.colorScheme.onSurface) },
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                 }
             },
             actions = {
                 if (uiState.hasResult) {
                     IconButton(onClick = { viewModel.reset() }) {
-                        Icon(Icons.Default.Refresh, contentDescription = "New Question", tint = Saffron500)
+                        Icon(Icons.Default.Refresh, contentDescription = "New Question", tint = MaterialTheme.colorScheme.primary)
                     }
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Cosmic950)
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
         )
 
         when {
@@ -109,7 +99,7 @@ fun PathfinderScreen(
                     // Question
                     Card(
                         modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(containerColor = Saffron500.copy(alpha = 0.1f)),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
                         shape = MaterialTheme.shapes.medium
                     ) {
                         Column(
@@ -120,13 +110,13 @@ fun PathfinderScreen(
                             Text(
                                 text = "Your Question",
                                 style = MaterialTheme.typography.labelMedium,
-                                color = Saffron400
+                                color = MaterialTheme.colorScheme.primary
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 text = uiState.selectedQuestion,
                                 style = MaterialTheme.typography.titleMedium,
-                                color = TextPrimary,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 fontWeight = FontWeight.Medium
                             )
                         }
@@ -139,7 +129,7 @@ fun PathfinderScreen(
                         Text(
                             text = uiState.answer,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = TextSecondary
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
 
@@ -157,13 +147,13 @@ fun PathfinderScreen(
                     Text(
                         text = "What do you want to know?",
                         style = MaterialTheme.typography.headlineSmall,
-                        color = TextPrimary
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "Select a question or ask your own",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = TextSecondary
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -172,7 +162,7 @@ fun PathfinderScreen(
                     Text(
                         text = "Popular Questions",
                         style = MaterialTheme.typography.titleSmall,
-                        color = TextTertiary
+                        color = MaterialTheme.colorScheme.outline
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -192,11 +182,11 @@ fun PathfinderScreen(
                                     )
                                 },
                                 colors = FilterChipDefaults.filterChipColors(
-                                    containerColor = SurfaceCard,
-                                    labelColor = TextSecondary
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                    labelColor = MaterialTheme.colorScheme.onSurfaceVariant
                                 ),
                                 border = FilterChipDefaults.filterChipBorder(
-                                    borderColor = BorderDark,
+                                    borderColor = MaterialTheme.colorScheme.outline,
                                     enabled = true,
                                     selected = false
                                 )
@@ -210,7 +200,7 @@ fun PathfinderScreen(
                     Text(
                         text = "Or ask your own question",
                         style = MaterialTheme.typography.titleSmall,
-                        color = TextTertiary
+                        color = MaterialTheme.colorScheme.outline
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -219,16 +209,16 @@ fun PathfinderScreen(
                         onValueChange = { viewModel.updateCustomQuestion(it) },
                         modifier = Modifier.fillMaxWidth(),
                         placeholder = {
-                            Text("Type your question here...", color = TextTertiary)
+                            Text("Type your question here...", color = MaterialTheme.colorScheme.outline)
                         },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Saffron500,
-                            unfocusedBorderColor = BorderDark,
-                            focusedTextColor = TextPrimary,
-                            unfocusedTextColor = TextPrimary,
-                            cursorColor = Saffron500,
-                            focusedContainerColor = SurfaceCard,
-                            unfocusedContainerColor = SurfaceCard
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            cursorColor = MaterialTheme.colorScheme.primary,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
                         ),
                         shape = MaterialTheme.shapes.small,
                         minLines = 3,
@@ -242,7 +232,7 @@ fun PathfinderScreen(
                         modifier = Modifier.fillMaxWidth(),
                         enabled = uiState.customQuestion.isNotBlank(),
                         colors = ButtonDefaults.filledTonalButtonColors(
-                            containerColor = Saffron500,
+                            containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = Color.White
                         ),
                         shape = MaterialTheme.shapes.medium

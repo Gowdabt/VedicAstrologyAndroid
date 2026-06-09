@@ -56,16 +56,6 @@ import com.astrologyvedic.app.ui.components.LoadingState
 import com.astrologyvedic.app.ui.components.PersonForm
 import com.astrologyvedic.app.ui.components.ResultCard
 import com.astrologyvedic.app.ui.components.isValid
-import com.astrologyvedic.app.ui.theme.Cosmic800
-import com.astrologyvedic.app.ui.theme.Cosmic950
-import com.astrologyvedic.app.ui.theme.Saffron400
-import com.astrologyvedic.app.ui.theme.Saffron500
-import com.astrologyvedic.app.ui.theme.SurfaceCard
-import com.astrologyvedic.app.ui.theme.SurfaceCardElevated
-import com.astrologyvedic.app.ui.theme.SurfaceDark
-import com.astrologyvedic.app.ui.theme.TextPrimary
-import com.astrologyvedic.app.ui.theme.TextSecondary
-import com.astrologyvedic.app.ui.theme.TextTertiary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,16 +68,16 @@ fun KundliScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(SurfaceDark)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         TopAppBar(
-            title = { Text("Kundli", color = TextPrimary) },
+            title = { Text("Kundli", color = MaterialTheme.colorScheme.onSurface) },
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Cosmic950)
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
         )
 
         Column(
@@ -112,7 +102,7 @@ fun KundliScreen(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = uiState.personForm.isValid(),
                     colors = ButtonDefaults.filledTonalButtonColors(
-                        containerColor = Saffron500,
+                        containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = Color.White
                     ),
                     shape = MaterialTheme.shapes.medium
@@ -144,10 +134,10 @@ fun KundliScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = { /* TODO: Share */ }) {
-                        Icon(Icons.Default.Share, contentDescription = "Share", tint = Saffron500)
+                        Icon(Icons.Default.Share, contentDescription = "Share", tint = MaterialTheme.colorScheme.primary)
                     }
                     IconButton(onClick = { /* TODO: PDF */ }) {
-                        Icon(Icons.Default.PictureAsPdf, contentDescription = "PDF", tint = Saffron500)
+                        Icon(Icons.Default.PictureAsPdf, contentDescription = "PDF", tint = MaterialTheme.colorScheme.primary)
                     }
                 }
 
@@ -155,8 +145,8 @@ fun KundliScreen(
                 val tabs = listOf("Chart", "Planets", "Dasha", "Yoga", "Dosha")
                 TabRow(
                     selectedTabIndex = uiState.selectedTab,
-                    containerColor = SurfaceCard,
-                    contentColor = Saffron500
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    contentColor = MaterialTheme.colorScheme.primary
                 ) {
                     tabs.forEachIndexed { index, title ->
                         Tab(
@@ -165,7 +155,7 @@ fun KundliScreen(
                             text = {
                                 Text(
                                     text = title,
-                                    color = if (uiState.selectedTab == index) Saffron500 else TextTertiary,
+                                    color = if (uiState.selectedTab == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                                     style = MaterialTheme.typography.bodySmall
                                 )
                             }
@@ -190,6 +180,7 @@ fun KundliScreen(
 @Composable
 private fun ChartTab() {
     ResultCard(title = "North Indian Chart") {
+        val chartColor = MaterialTheme.colorScheme.primary
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -201,7 +192,7 @@ private fun ChartTab() {
                 val w = size.width
                 val h = size.height
                 val strokeWidth = 2f
-                val color = Saffron400
+                val color = chartColor
 
                 // Outer square
                 drawRect(
@@ -225,7 +216,7 @@ private fun ChartTab() {
             Text(
                 text = "Asc",
                 style = MaterialTheme.typography.bodySmall,
-                color = Saffron500,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.align(Alignment.TopCenter).padding(top = 8.dp)
             )
         }
@@ -240,29 +231,29 @@ private fun PlanetsTab(planets: List<PlanetInfo>) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Cosmic800)
+                    .background(MaterialTheme.colorScheme.surfaceContainerHighest)
                     .padding(8.dp)
             ) {
-                Text("Planet", modifier = Modifier.weight(1f), style = MaterialTheme.typography.labelSmall, color = Saffron400, fontWeight = FontWeight.Bold)
-                Text("Sign", modifier = Modifier.weight(1f), style = MaterialTheme.typography.labelSmall, color = Saffron400, fontWeight = FontWeight.Bold)
-                Text("House", modifier = Modifier.weight(0.7f), style = MaterialTheme.typography.labelSmall, color = Saffron400, fontWeight = FontWeight.Bold)
-                Text("Nakshatra", modifier = Modifier.weight(1.2f), style = MaterialTheme.typography.labelSmall, color = Saffron400, fontWeight = FontWeight.Bold)
-                Text("Degree", modifier = Modifier.weight(0.8f), style = MaterialTheme.typography.labelSmall, color = Saffron400, fontWeight = FontWeight.Bold)
+                Text("Planet", modifier = Modifier.weight(1f), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                Text("Sign", modifier = Modifier.weight(1f), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                Text("House", modifier = Modifier.weight(0.7f), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                Text("Nakshatra", modifier = Modifier.weight(1.2f), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                Text("Degree", modifier = Modifier.weight(0.8f), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
             }
-            HorizontalDivider(color = Cosmic800)
+            HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainerHighest)
             planets.forEach { planet ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp, vertical = 6.dp)
                 ) {
-                    Text(planet.planet, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodySmall, color = TextPrimary)
-                    Text(planet.sign, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodySmall, color = TextSecondary)
-                    Text(planet.house, modifier = Modifier.weight(0.7f), style = MaterialTheme.typography.bodySmall, color = TextSecondary)
-                    Text(planet.nakshatra, modifier = Modifier.weight(1.2f), style = MaterialTheme.typography.bodySmall, color = TextSecondary)
-                    Text(planet.degree, modifier = Modifier.weight(0.8f), style = MaterialTheme.typography.bodySmall, color = TextSecondary)
+                    Text(planet.planet, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+                    Text(planet.sign, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(planet.house, modifier = Modifier.weight(0.7f), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(planet.nakshatra, modifier = Modifier.weight(1.2f), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(planet.degree, modifier = Modifier.weight(0.8f), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
-                HorizontalDivider(color = Cosmic800.copy(alpha = 0.5f))
+                HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
             }
         }
     }
@@ -280,7 +271,7 @@ private fun DashaTab(result: com.google.gson.JsonObject?) {
         Text(
             text = dashaText,
             style = MaterialTheme.typography.bodyMedium,
-            color = TextSecondary
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
@@ -297,7 +288,7 @@ private fun YogaTab(result: com.google.gson.JsonObject?) {
         Text(
             text = yogaText,
             style = MaterialTheme.typography.bodyMedium,
-            color = TextSecondary
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
@@ -314,7 +305,7 @@ private fun DoshaTab(result: com.google.gson.JsonObject?) {
         Text(
             text = doshaText,
             style = MaterialTheme.typography.bodyMedium,
-            color = TextSecondary
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

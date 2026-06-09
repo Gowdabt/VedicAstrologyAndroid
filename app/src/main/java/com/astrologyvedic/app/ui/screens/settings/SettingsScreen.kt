@@ -25,16 +25,16 @@ fun SettingsScreen(navController: NavController) {
     var selectedSystem by remember { mutableIntStateOf(0) }
 
     Column(
-        modifier = Modifier.fillMaxSize().background(SurfaceDark)
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)
     ) {
         TopAppBar(
-            title = { Text("Settings", color = TextPrimary) },
+            title = { Text("Settings", color = MaterialTheme.colorScheme.onSurface) },
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Cosmic950)
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
         )
 
         Column(
@@ -57,10 +57,10 @@ fun SettingsScreen(navController: NavController) {
                         RadioButton(
                             selected = selectedAyanamsa == index,
                             onClick = { selectedAyanamsa = index },
-                            colors = RadioButtonDefaults.colors(selectedColor = Saffron500)
+                            colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colorScheme.primary)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = option, color = TextPrimary, style = MaterialTheme.typography.bodyMedium)
+                        Text(text = option, color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.bodyMedium)
                     }
                 }
             }
@@ -78,10 +78,10 @@ fun SettingsScreen(navController: NavController) {
                         RadioButton(
                             selected = selectedChartStyle == index,
                             onClick = { selectedChartStyle = index },
-                            colors = RadioButtonDefaults.colors(selectedColor = Saffron500)
+                            colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colorScheme.primary)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = style, color = TextPrimary, style = MaterialTheme.typography.bodyMedium)
+                        Text(text = style, color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.bodyMedium)
                     }
                 }
             }
@@ -99,10 +99,10 @@ fun SettingsScreen(navController: NavController) {
                         RadioButton(
                             selected = selectedSystem == index,
                             onClick = { selectedSystem = index },
-                            colors = RadioButtonDefaults.colors(selectedColor = Saffron500)
+                            colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colorScheme.primary)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = system, color = TextPrimary, style = MaterialTheme.typography.bodyMedium)
+                        Text(text = system, color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.bodyMedium)
                     }
                 }
             }
@@ -130,14 +130,14 @@ fun SettingsScreen(navController: NavController) {
 private fun SettingsSection(title: String, content: @Composable ColumnScope.() -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = SurfaceCard),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
         shape = RoundedCornerShape(14.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleSmall,
-                color = Saffron400,
+                color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
@@ -158,7 +158,7 @@ private fun SettingsToggle(label: String, defaultChecked: Boolean) {
     ) {
         Text(
             text = label,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.weight(1f)
         )
@@ -166,8 +166,8 @@ private fun SettingsToggle(label: String, defaultChecked: Boolean) {
             checked = checked,
             onCheckedChange = { checked = it },
             colors = SwitchDefaults.colors(
-                checkedThumbColor = Saffron500,
-                checkedTrackColor = Saffron500.copy(alpha = 0.3f)
+                checkedThumbColor = MaterialTheme.colorScheme.primary,
+                checkedTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
             )
         )
     }

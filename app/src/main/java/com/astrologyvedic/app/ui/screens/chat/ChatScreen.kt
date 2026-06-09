@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,17 +31,21 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.DeleteSweep
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.SuggestionChipDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -52,23 +57,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.astrologyvedic.app.ui.theme.BorderDark
-import com.astrologyvedic.app.ui.theme.Cosmic800
-import com.astrologyvedic.app.ui.theme.Cosmic950
-import com.astrologyvedic.app.ui.theme.Saffron400
-import com.astrologyvedic.app.ui.theme.Saffron500
-import com.astrologyvedic.app.ui.theme.SurfaceCard
-import com.astrologyvedic.app.ui.theme.SurfaceCardElevated
-import com.astrologyvedic.app.ui.theme.SurfaceDark
-import com.astrologyvedic.app.ui.theme.TextPrimary
-import com.astrologyvedic.app.ui.theme.TextSecondary
-import com.astrologyvedic.app.ui.theme.TextTertiary
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,34 +76,87 @@ fun ChatScreen(
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
 
-    // Auto-scroll to bottom when new messages arrive
+    // Auto-scroll to latest message (index 0 in reversed layout)
     LaunchedEffect(uiState.messages.size) {
         if (uiState.messages.isNotEmpty()) {
-            listState.animateScrollToItem(uiState.messages.size - 1)
+            listState.animateScrollToItem(0)
         }
     }
 
-    Column(
+    Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .background(SurfaceDark)
-    ) {
-        TopAppBar(
-            title = { Text("Ask the Stars", color = TextPrimary) },
-            actions = {
-                if (uiState.messages.isNotEmpty()) {
-                    IconButton(onClick = { viewModel.clearHistory() }) {
-                        Icon(Icons.Default.DeleteSweep, contentDescription = "Clear", tint = TextTertiary)
+            .imePadding(),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Column {
+                        Text(
+                            text = "AI Astrologer",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(18.dp)
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.tertiaryContainer),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Person,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(12.dp),
+                                    tint = MaterialTheme.colorScheme.onTertiaryContainer
+                                )
+                            }
+                            Text(
+                                text = "Astro Seeker",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
-                }
-            },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Cosmic950)
-        )
-
-        // Messages list
-        Box(modifier = Modifier.weight(1f)) {
+                },
+                actions = {
+                    if (uiState.messages.isNotEmpty()) {
+                        IconButton(onClick = { viewModel.clearHistory() }) {
+                            Icon(
+                                Icons.Default.DeleteSweep,
+                                contentDescription = "Clear chat",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
+            )
+        },
+        bottomBar = {
+            ChatBottomBar(
+                inputText = uiState.inputText,
+                isTyping = uiState.isTyping,
+                showSuggestions = uiState.messages.isNotEmpty() || uiState.messages.isEmpty(),
+                onInputChange = { viewModel.updateInput(it) },
+                onSendClick = { viewModel.sendMessage() },
+                onSuggestionClick = { viewModel.sendMessage(it) }
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
             if (uiState.messages.isEmpty() && !uiState.isTyping) {
-                // Empty state
                 EmptyStateContent(
                     onSuggestionClick = { viewModel.sendMessage(it) }
                 )
@@ -114,103 +164,125 @@ fun ChatScreen(
                 LazyColumn(
                     state = listState,
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    reverseLayout = true,
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(uiState.messages) { message ->
-                        ChatBubble(message = message)
-                    }
                     if (uiState.isTyping) {
-                        item {
+                        item(key = "typing") {
                             TypingIndicator()
                         }
                     }
+                    items(
+                        items = uiState.messages.reversed(),
+                        key = { it.id }
+                    ) { message ->
+                        ChatBubble(message = message)
+                    }
                 }
             }
         }
+    }
+}
 
-        // Quick suggestion chips
-        if (uiState.messages.isNotEmpty()) {
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+@Composable
+private fun ChatBottomBar(
+    inputText: String,
+    isTyping: Boolean,
+    showSuggestions: Boolean,
+    onInputChange: (String) -> Unit,
+    onSendClick: () -> Unit,
+    onSuggestionClick: (String) -> Unit
+) {
+    val suggestions = listOf(
+        "☄️ Career Outlook",
+        "❤️ Matchmaking",
+        "⚕️ Health"
+    )
+
+    Surface(
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = 3.dp
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            // Suggestion chips row
+            if (showSuggestions) {
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(suggestions) { suggestion ->
+                        SuggestionChip(
+                            onClick = { onSuggestionClick(suggestion) },
+                            label = {
+                                Text(
+                                    text = suggestion,
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            },
+                            colors = SuggestionChipDefaults.suggestionChipColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                labelColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            ),
+                            border = null
+                        )
+                    }
+                }
+            }
+
+            // Input row
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                val suggestions = listOf(
-                    "Marriage timing?",
-                    "Career path?",
-                    "Health concerns?",
-                    "Lucky period?"
-                )
-                items(suggestions) { suggestion ->
-                    FilterChip(
-                        selected = false,
-                        onClick = { viewModel.sendMessage(suggestion) },
-                        label = {
-                            Text(suggestion, style = MaterialTheme.typography.bodySmall)
-                        },
-                        colors = FilterChipDefaults.filterChipColors(
-                            containerColor = SurfaceCard,
-                            labelColor = TextSecondary
-                        ),
-                        border = FilterChipDefaults.filterChipBorder(
-                            borderColor = BorderDark,
-                            enabled = true,
-                            selected = false
+                OutlinedTextField(
+                    value = inputText,
+                    onValueChange = onInputChange,
+                    modifier = Modifier.weight(1f),
+                    placeholder = {
+                        Text(
+                            text = "Ask about your chart...",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                         )
+                    },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        cursorColor = MaterialTheme.colorScheme.primary,
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface
+                    ),
+                    shape = RoundedCornerShape(24.dp),
+                    singleLine = false,
+                    maxLines = 4
+                )
+
+                FilledIconButton(
+                    onClick = onSendClick,
+                    enabled = inputText.isNotBlank() && !isTyping,
+                    modifier = Modifier.size(48.dp),
+                    shape = CircleShape,
+                    colors = IconButtonDefaults.filledIconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Send,
+                        contentDescription = "Send message",
+                        modifier = Modifier.size(20.dp)
                     )
                 }
-            }
-        }
-
-        // Input area
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Cosmic950)
-                .padding(horizontal = 12.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            OutlinedTextField(
-                value = uiState.inputText,
-                onValueChange = { viewModel.updateInput(it) },
-                modifier = Modifier.weight(1f),
-                placeholder = {
-                    Text(
-                        text = "Ask anything about your stars...",
-                        color = TextTertiary
-                    )
-                },
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Saffron500,
-                    unfocusedBorderColor = BorderDark,
-                    focusedTextColor = TextPrimary,
-                    unfocusedTextColor = TextPrimary,
-                    cursorColor = Saffron500,
-                    focusedContainerColor = SurfaceCard,
-                    unfocusedContainerColor = SurfaceCard
-                ),
-                shape = RoundedCornerShape(24.dp),
-                singleLine = false,
-                maxLines = 4
-            )
-            IconButton(
-                onClick = { viewModel.sendMessage() },
-                enabled = uiState.inputText.isNotBlank() && !uiState.isTyping,
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(
-                        if (uiState.inputText.isNotBlank()) Saffron500
-                        else SurfaceCard
-                    )
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Send,
-                    contentDescription = "Send",
-                    tint = if (uiState.inputText.isNotBlank()) Color.White else TextTertiary
-                )
             }
         }
     }
@@ -223,44 +295,67 @@ private fun EmptyStateContent(onSuggestionClick: (String) -> Unit) {
             .fillMaxSize()
             .padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.Center
     ) {
+        // Astrologer avatar
+        Box(
+            modifier = Modifier
+                .size(72.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primaryContainer),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.AutoAwesome,
+                contentDescription = null,
+                modifier = Modifier.size(36.dp),
+                tint = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         Text(
-            text = "Ask the Stars",
+            text = "AI Astrologer",
             style = MaterialTheme.typography.headlineMedium,
-            color = TextPrimary
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface
         )
+
         Spacer(modifier = Modifier.height(8.dp))
+
         Text(
-            text = "Get personalized astrology insights based on your birth chart",
+            text = "Get personalized Vedic astrology insights\nbased on your birth chart",
             style = MaterialTheme.typography.bodyMedium,
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
         )
+
         Spacer(modifier = Modifier.height(32.dp))
 
         val suggestions = listOf(
-            "Marriage timing?",
-            "Career path?",
-            "Health concerns?",
-            "Lucky period?"
+            "☄️ Career Outlook",
+            "❤️ Matchmaking",
+            "⚕️ Health",
+            "✨ Lucky Period"
         )
+
         suggestions.forEach { suggestion ->
-            Card(
+            SuggestionChip(
                 onClick = { onSuggestionClick(suggestion) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
-                colors = CardDefaults.cardColors(containerColor = SurfaceCard),
-                shape = MaterialTheme.shapes.medium
-            ) {
-                Text(
-                    text = suggestion,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = TextSecondary,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
-                )
-            }
+                label = {
+                    Text(
+                        text = suggestion,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                modifier = Modifier.padding(vertical = 4.dp),
+                colors = SuggestionChipDefaults.suggestionChipColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    labelColor = MaterialTheme.colorScheme.onSecondaryContainer
+                ),
+                border = null
+            )
         }
     }
 }
@@ -268,31 +363,73 @@ private fun EmptyStateContent(onSuggestionClick: (String) -> Unit) {
 @Composable
 private fun ChatBubble(message: ChatUiMessage) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+    val formattedTime = timeFormat.format(Date(message.timestamp))
 
-    Row(
+    Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = if (message.isUser) Arrangement.End else Arrangement.Start
+        horizontalAlignment = if (message.isUser) Alignment.End else Alignment.Start
     ) {
-        Card(
+        Row(
             modifier = Modifier.widthIn(max = screenWidth * 0.8f),
-            colors = CardDefaults.cardColors(
-                containerColor = if (message.isUser) Saffron500.copy(alpha = 0.15f)
-                else SurfaceCardElevated
-            ),
-            shape = RoundedCornerShape(
-                topStart = 16.dp,
-                topEnd = 16.dp,
-                bottomStart = if (message.isUser) 16.dp else 4.dp,
-                bottomEnd = if (message.isUser) 4.dp else 16.dp
-            )
+            horizontalArrangement = if (message.isUser) Arrangement.End else Arrangement.Start,
+            verticalAlignment = Alignment.Bottom
         ) {
-            Text(
-                text = message.message,
-                style = MaterialTheme.typography.bodyMedium,
-                color = TextPrimary,
-                modifier = Modifier.padding(12.dp)
-            )
+            // AI avatar on the left
+            if (!message.isUser) {
+                Box(
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.tertiaryContainer),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.AutoAwesome,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+
+            // Message bubble
+            Surface(
+                color = if (message.isUser)
+                    MaterialTheme.colorScheme.primaryContainer
+                else
+                    MaterialTheme.colorScheme.surfaceVariant,
+                shape = RoundedCornerShape(
+                    topStart = 16.dp,
+                    topEnd = if (message.isUser) 4.dp else 16.dp,
+                    bottomStart = if (message.isUser) 16.dp else 4.dp,
+                    bottomEnd = 16.dp
+                ),
+                tonalElevation = if (message.isUser) 0.dp else 1.dp
+            ) {
+                Text(
+                    text = message.message,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (message.isUser)
+                        MaterialTheme.colorScheme.onPrimaryContainer
+                    else
+                        MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)
+                )
+            }
         }
+
+        // Timestamp
+        Text(
+            text = formattedTime,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+            modifier = Modifier.padding(
+                start = if (!message.isUser) 36.dp else 0.dp,
+                top = 4.dp
+            )
+        )
     }
 }
 
@@ -329,11 +466,31 @@ private fun TypingIndicator() {
 
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Start
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.Bottom
     ) {
-        Card(
-            colors = CardDefaults.cardColors(containerColor = SurfaceCardElevated),
-            shape = RoundedCornerShape(16.dp, 16.dp, 16.dp, 4.dp)
+        // AI avatar
+        Box(
+            modifier = Modifier
+                .size(28.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.tertiaryContainer),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.AutoAwesome,
+                contentDescription = null,
+                modifier = Modifier.size(16.dp),
+                tint = MaterialTheme.colorScheme.onTertiaryContainer
+            )
+        }
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Surface(
+            color = MaterialTheme.colorScheme.surfaceVariant,
+            shape = RoundedCornerShape(16.dp, 16.dp, 16.dp, 4.dp),
+            tonalElevation = 1.dp
         ) {
             Row(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
@@ -345,21 +502,21 @@ private fun TypingIndicator() {
                         .size(8.dp)
                         .alpha(dot1Alpha)
                         .clip(CircleShape)
-                        .background(Saffron400)
+                        .background(MaterialTheme.colorScheme.primary)
                 )
                 Box(
                     modifier = Modifier
                         .size(8.dp)
                         .alpha(dot2Alpha)
                         .clip(CircleShape)
-                        .background(Saffron400)
+                        .background(MaterialTheme.colorScheme.primary)
                 )
                 Box(
                     modifier = Modifier
                         .size(8.dp)
                         .alpha(dot3Alpha)
                         .clip(CircleShape)
-                        .background(Saffron400)
+                        .background(MaterialTheme.colorScheme.primary)
                 )
             }
         }

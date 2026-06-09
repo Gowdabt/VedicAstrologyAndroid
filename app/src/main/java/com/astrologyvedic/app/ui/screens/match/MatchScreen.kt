@@ -49,17 +49,7 @@ import com.astrologyvedic.app.ui.components.LoadingState
 import com.astrologyvedic.app.ui.components.PersonForm
 import com.astrologyvedic.app.ui.components.ResultCard
 import com.astrologyvedic.app.ui.components.isValid
-import com.astrologyvedic.app.ui.theme.Cosmic800
-import com.astrologyvedic.app.ui.theme.Cosmic950
-import com.astrologyvedic.app.ui.theme.Saffron400
-import com.astrologyvedic.app.ui.theme.Saffron500
 import com.astrologyvedic.app.ui.theme.Success
-import com.astrologyvedic.app.ui.theme.SurfaceCard
-import com.astrologyvedic.app.ui.theme.SurfaceCardElevated
-import com.astrologyvedic.app.ui.theme.SurfaceDark
-import com.astrologyvedic.app.ui.theme.TextPrimary
-import com.astrologyvedic.app.ui.theme.TextSecondary
-import com.astrologyvedic.app.ui.theme.TextTertiary
 import com.astrologyvedic.app.ui.theme.Warning
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,23 +63,23 @@ fun MatchScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(SurfaceDark)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         TopAppBar(
-            title = { Text("Match Making", color = TextPrimary) },
+            title = { Text("Match Making", color = MaterialTheme.colorScheme.onSurface) },
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                 }
             },
             actions = {
                 if (uiState.hasResult) {
                     IconButton(onClick = { /* TODO: Share */ }) {
-                        Icon(Icons.Default.Share, contentDescription = "Share", tint = Saffron500)
+                        Icon(Icons.Default.Share, contentDescription = "Share", tint = MaterialTheme.colorScheme.primary)
                     }
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Cosmic950)
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
         )
 
         when {
@@ -133,7 +123,7 @@ fun MatchScreen(
                             modifier = Modifier.fillMaxWidth(),
                             enabled = uiState.person1Form.isValid() && uiState.person2Form.isValid(),
                             colors = ButtonDefaults.filledTonalButtonColors(
-                                containerColor = Saffron500,
+                                containerColor = MaterialTheme.colorScheme.primary,
                                 contentColor = Color.White
                             ),
                             shape = MaterialTheme.shapes.medium
@@ -179,7 +169,7 @@ private fun GunaScoreCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = SurfaceCardElevated),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
         shape = MaterialTheme.shapes.medium
     ) {
         Column(
@@ -191,7 +181,7 @@ private fun GunaScoreCard(
             Text(
                 text = "Guna Milan Score",
                 style = MaterialTheme.typography.titleMedium,
-                color = TextPrimary
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -205,25 +195,25 @@ private fun GunaScoreCard(
                     modifier = Modifier.fillMaxSize(),
                     color = when {
                         totalScore >= 28 -> Success
-                        totalScore >= 21 -> Saffron500
+                        totalScore >= 21 -> MaterialTheme.colorScheme.primary
                         totalScore >= 14 -> Warning
                         else -> Color(0xFFEF4444)
                     },
                     strokeWidth = 10.dp,
-                    trackColor = Cosmic800,
+                    trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                     strokeCap = StrokeCap.Round
                 )
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = "$totalScore",
                         style = MaterialTheme.typography.headlineLarge,
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = "out of $maxScore",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TextTertiary
+                        color = MaterialTheme.colorScheme.outline
                     )
                 }
             }
@@ -235,7 +225,7 @@ private fun GunaScoreCard(
                 style = MaterialTheme.typography.titleLarge,
                 color = when (verdict) {
                     "Highly Compatible" -> Success
-                    "Good Match" -> Saffron500
+                    "Good Match" -> MaterialTheme.colorScheme.primary
                     "Average" -> Warning
                     else -> Color(0xFFEF4444)
                 },
@@ -256,21 +246,21 @@ private fun KootaScoreRow(koota: KootaScore) {
                 Text(
                     text = koota.name,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Medium
                 )
                 if (koota.description.isNotBlank()) {
                     Text(
                         text = koota.description,
                         style = MaterialTheme.typography.bodySmall,
-                        color = TextTertiary
+                        color = MaterialTheme.colorScheme.outline
                     )
                 }
             }
             Text(
                 text = "${koota.obtained}/${koota.maximum}",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Saffron400,
+                color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold
             )
         }
@@ -280,8 +270,8 @@ private fun KootaScoreRow(koota: KootaScore) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(4.dp),
-            color = Saffron500,
-            trackColor = Cosmic800,
+            color = MaterialTheme.colorScheme.primary,
+            trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             strokeCap = StrokeCap.Round
         )
     }

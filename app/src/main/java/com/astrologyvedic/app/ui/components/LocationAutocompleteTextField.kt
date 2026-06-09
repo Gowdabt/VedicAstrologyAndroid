@@ -41,14 +41,6 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import com.astrologyvedic.app.data.api.models.LocationSuggestion
 import com.astrologyvedic.app.data.repository.LocationRepository
-import com.astrologyvedic.app.ui.theme.BorderDark
-import com.astrologyvedic.app.ui.theme.Cosmic800
-import com.astrologyvedic.app.ui.theme.Saffron500
-import com.astrologyvedic.app.ui.theme.SurfaceCard
-import com.astrologyvedic.app.ui.theme.SurfaceCardElevated
-import com.astrologyvedic.app.ui.theme.TextPrimary
-import com.astrologyvedic.app.ui.theme.TextSecondary
-import com.astrologyvedic.app.ui.theme.TextTertiary
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -101,15 +93,15 @@ fun LocationAutocompleteTextField(
     }
 
     val textFieldColors = OutlinedTextFieldDefaults.colors(
-        focusedBorderColor = Saffron500,
-        unfocusedBorderColor = BorderDark,
-        focusedTextColor = TextPrimary,
-        unfocusedTextColor = TextPrimary,
-        cursorColor = Saffron500,
-        focusedContainerColor = SurfaceCard,
-        unfocusedContainerColor = SurfaceCard,
-        focusedLabelColor = Saffron500,
-        unfocusedLabelColor = TextTertiary
+        focusedBorderColor = MaterialTheme.colorScheme.primary,
+        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+        unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+        cursorColor = MaterialTheme.colorScheme.primary,
+        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+        focusedLabelColor = MaterialTheme.colorScheme.primary,
+        unfocusedLabelColor = MaterialTheme.colorScheme.outline
     )
 
     Box(modifier = modifier) {
@@ -121,9 +113,9 @@ fun LocationAutocompleteTextField(
                     searchQuery.value = newValue
                 },
                 label = { Text(label) },
-                placeholder = { Text(placeholder, color = TextTertiary) },
+                placeholder = { Text(placeholder, color = MaterialTheme.colorScheme.outline) },
                 leadingIcon = {
-                    Icon(Icons.Default.LocationOn, contentDescription = null, tint = TextTertiary)
+                    Icon(Icons.Default.LocationOn, contentDescription = null, tint = MaterialTheme.colorScheme.outline)
                 },
                 trailingIcon = {
                     when {
@@ -131,7 +123,7 @@ fun LocationAutocompleteTextField(
                             CircularProgressIndicator(
                                 modifier = Modifier.size(20.dp),
                                 strokeWidth = 2.dp,
-                                color = Saffron500
+                                color = MaterialTheme.colorScheme.primary
                             )
                         }
                         value.isNotEmpty() -> {
@@ -141,7 +133,7 @@ fun LocationAutocompleteTextField(
                                 suggestions = emptyList()
                                 showSuggestions = false
                             }) {
-                                Icon(Icons.Default.Close, contentDescription = "Clear", tint = TextTertiary)
+                                Icon(Icons.Default.Close, contentDescription = "Clear", tint = MaterialTheme.colorScheme.outline)
                             }
                         }
                     }
@@ -180,7 +172,7 @@ fun LocationAutocompleteTextField(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 0.dp),
-                    colors = CardDefaults.cardColors(containerColor = SurfaceCardElevated),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
                     elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
                     shape = MaterialTheme.shapes.small
                 ) {
@@ -200,7 +192,7 @@ fun LocationAutocompleteTextField(
                                 }
                             )
                             if (suggestion != suggestions.last()) {
-                                HorizontalDivider(color = Cosmic800.copy(alpha = 0.3f))
+                                HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.3f))
                             }
                         }
                     }
@@ -225,7 +217,7 @@ private fun LocationSuggestionItem(
         Icon(
             Icons.Default.LocationOn,
             contentDescription = null,
-            tint = Saffron500,
+            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(20.dp)
         )
         Spacer(modifier = Modifier.width(12.dp))
@@ -233,7 +225,7 @@ private fun LocationSuggestionItem(
             Text(
                 text = suggestion.toShortDisplayName(),
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -241,7 +233,7 @@ private fun LocationSuggestionItem(
                 Text(
                     text = suggestion.displayName,
                     style = MaterialTheme.typography.bodySmall,
-                    color = TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )

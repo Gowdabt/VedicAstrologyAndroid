@@ -30,20 +30,20 @@ fun MantraCounterScreen(
     val uiState by viewModel.uiState.collectAsState()
     var showMantraSelector by remember { mutableStateOf(false) }
 
-    Column(modifier = Modifier.fillMaxSize().background(SurfaceDark)) {
+    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)) {
         TopAppBar(
-            title = { Text("Mantra Counter", color = TextPrimary) },
+            title = { Text("Mantra Counter", color = MaterialTheme.colorScheme.onSurface) },
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                 }
             },
             actions = {
                 IconButton(onClick = { viewModel.reset() }) {
-                    Icon(Icons.Default.Refresh, contentDescription = "Reset", tint = TextPrimary)
+                    Icon(Icons.Default.Refresh, contentDescription = "Reset", tint = MaterialTheme.colorScheme.onSurface)
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Cosmic950)
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
         )
 
         Column(
@@ -54,13 +54,13 @@ fun MantraCounterScreen(
             // Mantra selector
             Card(
                 modifier = Modifier.fillMaxWidth().clickable { showMantraSelector = true },
-                colors = CardDefaults.cardColors(containerColor = SurfaceCardElevated),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
                 shape = MaterialTheme.shapes.medium
             ) {
                 Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Current Mantra", style = MaterialTheme.typography.bodySmall, color = TextTertiary)
+                    Text("Current Mantra", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(uiState.selectedMantra, style = MaterialTheme.typography.titleMedium, color = Saffron500, textAlign = TextAlign.Center)
+                    Text(uiState.selectedMantra, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary, textAlign = TextAlign.Center)
                 }
             }
 
@@ -71,13 +71,13 @@ fun MantraCounterScreen(
                 Text(
                     text = "${uiState.count}",
                     style = MaterialTheme.typography.displayLarge.copy(fontSize = 72.sp),
-                    color = if (uiState.isComplete) Success else TextPrimary,
+                    color = if (uiState.isComplete) Success else MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = "/ ${uiState.target}",
                     style = MaterialTheme.typography.headlineSmall,
-                    color = TextTertiary
+                    color = MaterialTheme.colorScheme.outline
                 )
                 if (uiState.isComplete) {
                     Spacer(modifier = Modifier.height(8.dp))
@@ -92,7 +92,7 @@ fun MantraCounterScreen(
                 modifier = Modifier
                     .size(180.dp)
                     .clip(CircleShape)
-                    .background(Saffron500)
+                    .background(MaterialTheme.colorScheme.primary)
                     .clickable { viewModel.increment() },
                 contentAlignment = Alignment.Center
             ) {
@@ -104,16 +104,16 @@ fun MantraCounterScreen(
             // Stats
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Today", style = MaterialTheme.typography.bodySmall, color = TextTertiary)
-                    Text("${uiState.count}", style = MaterialTheme.typography.titleLarge, color = TextPrimary)
+                    Text("Today", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
+                    Text("${uiState.count}", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onSurface)
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Total", style = MaterialTheme.typography.bodySmall, color = TextTertiary)
-                    Text("${uiState.totalCount}", style = MaterialTheme.typography.titleLarge, color = TextPrimary)
+                    Text("Total", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
+                    Text("${uiState.totalCount}", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onSurface)
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Target", style = MaterialTheme.typography.bodySmall, color = TextTertiary)
-                    Text("${uiState.target}", style = MaterialTheme.typography.titleLarge, color = TextPrimary)
+                    Text("Target", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
+                    Text("${uiState.target}", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onSurface)
                 }
             }
 
@@ -125,7 +125,7 @@ fun MantraCounterScreen(
     if (showMantraSelector) {
         AlertDialog(
             onDismissRequest = { showMantraSelector = false },
-            title = { Text("Select Mantra", color = TextPrimary) },
+            title = { Text("Select Mantra", color = MaterialTheme.colorScheme.onSurface) },
             text = {
                 Column {
                     viewModel.mantras.forEach { mantra ->
@@ -135,7 +135,7 @@ fun MantraCounterScreen(
                         ) {
                             Text(
                                 text = mantra,
-                                color = if (mantra == uiState.selectedMantra) Saffron500 else TextSecondary,
+                                color = if (mantra == uiState.selectedMantra) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
@@ -144,10 +144,10 @@ fun MantraCounterScreen(
             },
             confirmButton = {
                 TextButton(onClick = { showMantraSelector = false }) {
-                    Text("Cancel", color = TextSecondary)
+                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             },
-            containerColor = SurfaceCardElevated
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
         )
     }
 }

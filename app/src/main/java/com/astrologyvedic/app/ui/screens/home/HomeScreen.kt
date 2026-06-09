@@ -1,14 +1,25 @@
 package com.astrologyvedic.app.ui.screens.home
 
-import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AutoAwesome
+import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.ChatBubbleOutline
+import androidx.compose.material.icons.outlined.Construction
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.Numbers
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.icons.outlined.Style
+import androidx.compose.material.icons.outlined.WbSunny
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -26,268 +37,217 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.astrologyvedic.app.ui.navigation.Routes
-import com.astrologyvedic.app.ui.theme.*
 
 // ───── Data Models ─────
 
 private data class QuickAction(
     val title: String,
-    val icon: String,
-    val route: String,
-    val color: Color
+    val icon: ImageVector,
+    val route: String
 )
 
-private data class PromoCard(
+private data class SpecialService(
     val title: String,
-    val subtitle: String,
-    val icon: String,
+    val description: String,
     val route: String,
     val gradientColors: List<Color>
 )
 
-private val quickGrid = listOf(
-    QuickAction("Kundli", "☉", Routes.Kundli.route, Color(0xFFf97316)),
-    QuickAction("Daily", "☽", Routes.Daily.route, Color(0xFF3b82f6)),
-    QuickAction("Match", "♥", Routes.Match.route, Color(0xFFec4899)),
-    QuickAction("Panchang", "☸", Routes.Panchang.route, Color(0xFFeab308)),
-    QuickAction("AI Chat", "✧", Routes.AiChat.route, Color(0xFF8b5cf6)),
-    QuickAction("Tarot", "✦", Routes.Tarot.route, Color(0xFF6d28d9)),
-    QuickAction("Palm", "✋", Routes.PalmReading.route, Color(0xFF7c3aed)),
-    QuickAction("Muhurat", "✓", Routes.Muhurat.route, Color(0xFF10b981))
+private val quickActions = listOf(
+    QuickAction("Kundli", Icons.Outlined.WbSunny, Routes.Kundli.route),
+    QuickAction("Match", Icons.Outlined.Favorite, Routes.Match.route),
+    QuickAction("Daily", Icons.Outlined.Star, Routes.Daily.route),
+    QuickAction("Panchang", Icons.Outlined.CalendarMonth, Routes.Panchang.route),
+    QuickAction("Numerology", Icons.Outlined.Numbers, Routes.Numerology.route),
+    QuickAction("Tarot", Icons.Outlined.Style, Routes.Tarot.route),
+    QuickAction("Chat", Icons.Outlined.ChatBubbleOutline, Routes.Chat.route),
+    QuickAction("Tools", Icons.Outlined.Construction, Routes.Tools.route)
 )
 
-private val promoCards = listOf(
-    PromoCard(
+private val specialServices = listOf(
+    SpecialService(
         "AI Astrologer",
-        "Get personalized answers from AI",
-        "✧",
+        "Get personalized predictions powered by AI",
         Routes.AiChat.route,
         listOf(Color(0xFF7c3aed), Color(0xFF4c1d95))
     ),
-    PromoCard(
-        "Palm Reading",
-        "Upload your palm for AI analysis",
-        "✋",
-        Routes.PalmReading.route,
-        listOf(Color(0xFF6d28d9), Color(0xFF3b0764))
-    ),
-    PromoCard(
+    SpecialService(
         "Life Report",
-        "Complete 8-section life analysis",
-        "❋",
+        "Complete 8-section life analysis report",
         Routes.LifeReport.route,
         listOf(Color(0xFFf59e0b), Color(0xFF92400e))
+    ),
+    SpecialService(
+        "Palm Reading",
+        "Upload your palm for AI analysis",
+        Routes.PalmReading.route,
+        listOf(Color(0xFF059669), Color(0xFF064e3b))
     )
 )
 
-private val rashiSigns = listOf(
-    "Mesh" to "♈", "Vrishabh" to "♉", "Mithun" to "♊",
-    "Kark" to "♋", "Simha" to "♌", "Kanya" to "♍",
-    "Tula" to "♎", "Vrishchik" to "♏", "Dhanu" to "♐",
-    "Makar" to "♑", "Kumbh" to "♒", "Meen" to "♓"
+private val zodiacSigns = listOf(
+    "Aries" to "♈", "Taurus" to "♉", "Gemini" to "♊", "Cancer" to "♋",
+    "Leo" to "♌", "Virgo" to "♍", "Libra" to "♎", "Scorpio" to "♏",
+    "Sagittarius" to "♐", "Capricorn" to "♑", "Aquarius" to "♒", "Pisces" to "♓"
 )
 
 // ───── Screen ─────
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavController) {
     val viewModel: HomeViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 16.dp)
-    ) {
-        // ═══ 1. COSMIC GREETING / TODAY'S ENERGY ═══
-        item {
-            CosmicHeroCard(uiState = uiState, navController = navController)
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Vedic Astrology",
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                actions = {
+                    IconButton(onClick = { /* TODO: Search */ }) {
+                        Icon(Icons.Outlined.Search, contentDescription = "Search")
+                    }
+                    IconButton(onClick = { navController.navigate(Routes.Settings.route) }) {
+                        Icon(Icons.Outlined.Settings, contentDescription = "Settings")
+                    }
+                }
+            )
         }
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            contentPadding = PaddingValues(bottom = 24.dp)
+        ) {
+            // 1. Today's Panchang Hero Card
+            item {
+                PanchangHeroCard(uiState = uiState, navController = navController)
+            }
 
-        // ═══ 2. QUICK ACCESS GRID (4x2) ═══
-        item {
-            QuickAccessGrid(navController = navController)
-        }
+            // 2. Quick Access Grid
+            item {
+                QuickAccessGrid(navController = navController)
+            }
 
-        // ═══ 3. PROMO CARDS (large visual cards) ═══
-        item {
-            PromoSection(navController = navController)
-        }
+            // 3. Special Services Section
+            item {
+                SpecialServicesSection(navController = navController)
+            }
 
-        // ═══ 4. DAILY HOROSCOPE (zodiac grid) ═══
-        item {
-            HoroscopeSection(navController = navController)
-        }
-
-        // ═══ 5. SYSTEM FOOTER ═══
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                SystemChip("Parashari")
-                SystemChip("•")
-                SystemChip("Lahiri Ayanamsa")
-                SystemChip("•")
-                SystemChip("Swiss Ephemeris")
+            // 4. Zodiac Signs Section
+            item {
+                ZodiacSignsSection(navController = navController)
             }
         }
     }
 }
 
-// ───── 1. HERO CARD ─────
+// ───── 1. Panchang Hero Card ─────
 
 @Composable
-private fun CosmicHeroCard(uiState: HomeUiState, navController: NavController) {
-    val context = LocalContext.current
-
-    Box(
+private fun PanchangHeroCard(uiState: HomeUiState, navController: NavController) {
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF1a0a2e),
-                        Color(0xFF0f0720),
-                        Cosmic950
-                    )
-                )
-            )
-            .padding(horizontal = 16.dp, vertical = 20.dp)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        ),
+        shape = MaterialTheme.shapes.large,
+        onClick = { navController.navigate(Routes.Panchang.route) }
     ) {
-        Column {
-            // Greeting
-            Text(
-                text = "Namaste 🙏",
-                style = MaterialTheme.typography.headlineSmall,
-                color = TextPrimary,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = uiState.todayDate,
-                style = MaterialTheme.typography.bodyMedium,
-                color = TextTertiary
+        Box(modifier = Modifier.fillMaxWidth()) {
+            // Decorative star element in top-right corner
+            Icon(
+                imageVector = Icons.Outlined.AutoAwesome,
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(12.dp)
+                    .size(24.dp),
+                tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.3f)
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Today's Panchang Summary — matching web layout
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF1a1035)),
-                shape = RoundedCornerShape(16.dp),
-                onClick = { navController.navigate(Routes.Panchang.route) }
+            Column(
+                modifier = Modifier.padding(20.dp)
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    // Header
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Today's Panchang",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = Saffron400,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Surface(
-                            color = Saffron500.copy(alpha = 0.15f),
-                            shape = RoundedCornerShape(20.dp),
-                            modifier = Modifier.clickable {
-                                val shareText = buildString {
-                                    append("📅 Today's Panchang - ${uiState.todayDate}\n\n")
-                                    append("🌙 Tithi: ${uiState.tithi.ifEmpty { "—" }}\n")
-                                    append("⭐ Nakshatra: ${uiState.nakshatra.ifEmpty { "—" }}\n")
-                                    append("🔴 Rahu Kala: ${uiState.rahuKaal.ifEmpty { "—" }}\n")
-                                    append("🟡 Yamaganda: ${uiState.yamaganda.ifEmpty { "—" }}\n")
-                                    append("🟣 Gulika: ${uiState.gulika.ifEmpty { "—" }}\n\n")
-                                    append("Shared via Vedic Astrology App")
-                                }
-                                val sendIntent = Intent().apply {
-                                    action = Intent.ACTION_SEND
-                                    putExtra(Intent.EXTRA_TEXT, shareText)
-                                    type = "text/plain"
-                                }
-                                val shareIntent = Intent.createChooser(sendIntent, "Share Panchang")
-                                context.startActivity(shareIntent)
-                            }
-                        ) {
-                            Text(
-                                text = "Share",
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = Saffron400,
-                                fontWeight = FontWeight.Medium
-                            )
-                        }
-                    }
+                // Label
+                Text(
+                    text = "TODAY'S PANCHANG",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
+                    fontWeight = FontWeight.SemiBold,
+                    letterSpacing = 1.sp
+                )
 
-                    // Date
-                    Text(
-                        text = uiState.todayDate,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = TextTertiary,
-                        modifier = Modifier.padding(top = 4.dp)
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Tithi name - large
+                Text(
+                    text = uiState.tithi.ifEmpty { "Loading..." },
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Nakshatra and Yoga chips
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    PanchangChip(
+                        label = uiState.nakshatra.ifEmpty { "---" }
                     )
-
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    // Panchang rows — like web screenshot
-                    PanchangInfoRow(label = "Tithi:", value = uiState.tithi, labelColor = Saffron400)
-                    PanchangInfoRow(label = "Nakshatra:", value = uiState.nakshatra, labelColor = Saffron400)
-                    PanchangInfoRow(label = "Rahu Kala:", value = uiState.rahuKaal, labelColor = Color(0xFFef4444))
-                    PanchangInfoRow(label = "Yamaganda:", value = uiState.yamaganda, labelColor = Color(0xFFf59e0b))
-                    PanchangInfoRow(label = "Gulika:", value = uiState.gulika, labelColor = Color(0xFFa855f7))
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    // CTA
-                    Text(
-                        text = "Open Detailed Panchang →",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = Saffron500,
-                        fontWeight = FontWeight.SemiBold
+                    PanchangChip(
+                        label = uiState.yoga.ifEmpty { "---" }
                     )
                 }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Date
+                Text(
+                    text = uiState.todayDate,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
+                )
             }
         }
     }
 }
 
 @Composable
-private fun PanchangInfoRow(label: String, value: String, labelColor: Color = Saffron400) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
+private fun PanchangChip(label: String) {
+    Surface(
+        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.1f),
+        shape = RoundedCornerShape(20.dp)
     ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = labelColor,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier.width(110.dp)
-        )
-        Text(
-            text = value.ifEmpty { "—" },
-            style = MaterialTheme.typography.bodyMedium,
-            color = TextPrimary,
-            fontWeight = FontWeight.Normal
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            fontWeight = FontWeight.Medium
         )
     }
 }
 
-// ───── 2. QUICK ACCESS GRID ─────
+// ───── 2. Quick Access Grid ─────
 
 @Composable
 private fun QuickAccessGrid(navController: NavController) {
-    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)) {
-        // 2 rows x 4 cols
-        val rows = quickGrid.chunked(4)
-        rows.forEach { rowItems ->
+    Column(
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
+    ) {
+        val rows = quickActions.chunked(4)
+        rows.forEachIndexed { index, rowItems ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -300,162 +260,162 @@ private fun QuickAccessGrid(navController: NavController) {
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            if (index < rows.lastIndex) {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
         }
     }
 }
 
 @Composable
-private fun QuickActionItem(action: QuickAction, onClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun QuickActionItem(
+    action: QuickAction,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier.clickable(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier
-                .size(50.dp)
-                .clip(RoundedCornerShape(14.dp))
-                .background(action.color.copy(alpha = 0.15f)),
-            contentAlignment = Alignment.Center
+        Surface(
+            modifier = Modifier.size(56.dp),
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.primaryContainer
         ) {
-            Text(
-                text = action.icon,
-                fontSize = 22.sp,
-                color = action.color
-            )
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = action.icon,
+                    contentDescription = action.title,
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
         }
         Spacer(modifier = Modifier.height(6.dp))
         Text(
             text = action.title,
             style = MaterialTheme.typography.labelSmall,
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Medium,
-            fontSize = 11.sp
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
 
-// ───── 3. PROMO SECTION ─────
+// ───── 3. Special Services Section ─────
 
 @Composable
-private fun PromoSection(navController: NavController) {
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+private fun SpecialServicesSection(navController: NavController) {
+    Column(
+        modifier = Modifier.padding(vertical = 16.dp)
+    ) {
+        // Header
         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(bottom = 12.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "AI-Powered Features",
+                text = "Special Services",
                 style = MaterialTheme.typography.titleMedium,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            Surface(
-                color = Color(0xFF8b5cf6).copy(alpha = 0.2f),
-                shape = RoundedCornerShape(4.dp)
-            ) {
-                Text(
-                    text = "NEW",
-                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                    fontSize = 9.sp,
-                    color = Color(0xFFc4b5fd),
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            Text(
+                text = "View all",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.clickable {
+                    navController.navigate(Routes.Services.route)
+                }
+            )
         }
 
-        promoCards.forEach { card ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 10.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                onClick = { navController.navigate(card.route) }
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            brush = Brush.horizontalGradient(card.gradientColors),
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .padding(16.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(48.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(Color.White.copy(alpha = 0.15f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(text = card.icon, fontSize = 24.sp)
-                        }
-                        Spacer(modifier = Modifier.width(14.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = card.title,
-                                style = MaterialTheme.typography.titleSmall,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                text = card.subtitle,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = Color.White.copy(alpha = 0.7f)
-                            )
-                        }
-                        Text(
-                            text = "→",
-                            color = Color.White.copy(alpha = 0.8f),
-                            fontSize = 20.sp
-                        )
-                    }
-                }
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Horizontal scrollable row of promo cards
+        Row(
+            modifier = Modifier
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            specialServices.forEach { service ->
+                SpecialServiceCard(
+                    service = service,
+                    onClick = { navController.navigate(service.route) }
+                )
             }
         }
     }
 }
 
-// ───── 4. HOROSCOPE SECTION ─────
+@Composable
+private fun SpecialServiceCard(service: SpecialService, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier
+            .width(220.dp)
+            .height(120.dp),
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+        onClick = onClick
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.horizontalGradient(service.gradientColors),
+                    shape = MaterialTheme.shapes.large
+                )
+                .padding(16.dp)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = service.title,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = service.description,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White.copy(alpha = 0.8f),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+    }
+}
+
+// ───── 4. Zodiac Signs Section ─────
 
 @Composable
-private fun HoroscopeSection(navController: NavController) {
-    Column(modifier = Modifier.padding(top = 16.dp)) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Today's Horoscope",
-                style = MaterialTheme.typography.titleMedium,
-                color = TextPrimary,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "View All →",
-                style = MaterialTheme.typography.labelMedium,
-                color = Saffron500,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.clickable { navController.navigate(Routes.Daily.route) }
-            )
-        }
+private fun ZodiacSignsSection(navController: NavController) {
+    Column(
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
+    ) {
+        // Header
+        Text(
+            text = "Zodiac Signs",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            fontWeight = FontWeight.Bold
+        )
 
-        // 3x4 grid of zodiac signs
-        val rows = rashiSigns.chunked(4)
-        Column(
-            modifier = Modifier.padding(horizontal = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // 3 rows x 4 columns grid
+        val rows = zodiacSigns.chunked(4)
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             rows.forEach { rowItems ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -476,46 +436,40 @@ private fun HoroscopeSection(navController: NavController) {
 }
 
 @Composable
-private fun ZodiacItem(name: String, symbol: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun ZodiacItem(
+    name: String,
+    symbol: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier
             .clickable(onClick = onClick)
-            .padding(vertical = 8.dp),
+            .padding(vertical = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier
-                .size(44.dp)
-                .clip(CircleShape)
-                .background(Saffron500.copy(alpha = 0.1f)),
-            contentAlignment = Alignment.Center
+        Surface(
+            modifier = Modifier.size(48.dp),
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.secondaryContainer
         ) {
-            Text(
-                text = symbol,
-                fontSize = 20.sp,
-                color = Saffron400
-            )
+            Box(contentAlignment = Alignment.Center) {
+                Text(
+                    text = symbol,
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+            }
         }
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = name,
             style = MaterialTheme.typography.labelSmall,
-            color = TextSecondary,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             fontSize = 10.sp
         )
     }
-}
-
-
-// ───── SYSTEM FOOTER ─────
-
-@Composable
-private fun SystemChip(text: String) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.bodySmall,
-        color = TextTertiary,
-        fontSize = 9.sp
-    )
 }

@@ -55,17 +55,6 @@ import androidx.navigation.NavController
 import com.astrologyvedic.app.ui.components.ErrorState
 import com.astrologyvedic.app.ui.components.LoadingState
 import com.astrologyvedic.app.ui.components.ResultCard
-import com.astrologyvedic.app.ui.theme.BorderDark
-import com.astrologyvedic.app.ui.theme.Cosmic800
-import com.astrologyvedic.app.ui.theme.Cosmic950
-import com.astrologyvedic.app.ui.theme.Saffron400
-import com.astrologyvedic.app.ui.theme.Saffron500
-import com.astrologyvedic.app.ui.theme.SurfaceCard
-import com.astrologyvedic.app.ui.theme.SurfaceCardElevated
-import com.astrologyvedic.app.ui.theme.SurfaceDark
-import com.astrologyvedic.app.ui.theme.TextPrimary
-import com.astrologyvedic.app.ui.theme.TextSecondary
-import com.astrologyvedic.app.ui.theme.TextTertiary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,23 +67,23 @@ fun TarotScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(SurfaceDark)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         TopAppBar(
-            title = { Text("Tarot Reading", color = TextPrimary) },
+            title = { Text("Tarot Reading", color = MaterialTheme.colorScheme.onSurface) },
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                 }
             },
             actions = {
                 if (uiState.hasResult) {
                     IconButton(onClick = { viewModel.reset() }) {
-                        Icon(Icons.Default.Refresh, contentDescription = "New Reading", tint = Saffron500)
+                        Icon(Icons.Default.Refresh, contentDescription = "New Reading", tint = MaterialTheme.colorScheme.primary)
                     }
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Cosmic950)
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
         )
 
         when {
@@ -121,7 +110,7 @@ fun TarotScreen(
                         Text(
                             text = "Tap the cards to reveal",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = TextTertiary
+                            color = MaterialTheme.colorScheme.outline
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                     }
@@ -148,7 +137,7 @@ fun TarotScreen(
                             Text(
                                 text = uiState.overallMessage,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = TextSecondary
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
 
@@ -158,7 +147,7 @@ fun TarotScreen(
                         uiState.cards.forEach { card ->
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
-                                colors = CardDefaults.cardColors(containerColor = SurfaceCardElevated),
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
                                 shape = MaterialTheme.shapes.medium
                             ) {
                                 Column(
@@ -170,7 +159,7 @@ fun TarotScreen(
                                         Text(
                                             text = card.name,
                                             style = MaterialTheme.typography.titleSmall,
-                                            color = Saffron400,
+                                            color = MaterialTheme.colorScheme.primary,
                                             fontWeight = FontWeight.Bold
                                         )
                                         if (card.isReversed) {
@@ -178,7 +167,7 @@ fun TarotScreen(
                                             Text(
                                                 text = "(Reversed)",
                                                 style = MaterialTheme.typography.bodySmall,
-                                                color = TextTertiary
+                                                color = MaterialTheme.colorScheme.outline
                                             )
                                         }
                                     }
@@ -186,14 +175,14 @@ fun TarotScreen(
                                         Text(
                                             text = "Position: ${card.position}",
                                             style = MaterialTheme.typography.bodySmall,
-                                            color = TextTertiary
+                                            color = MaterialTheme.colorScheme.outline
                                         )
                                     }
                                     Spacer(modifier = Modifier.height(8.dp))
                                     Text(
                                         text = card.interpretation,
                                         style = MaterialTheme.typography.bodyMedium,
-                                        color = TextSecondary
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             }
@@ -215,7 +204,7 @@ fun TarotScreen(
                     Text(
                         text = "Choose Your Spread",
                         style = MaterialTheme.typography.titleMedium,
-                        color = TextPrimary
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(12.dp))
 
@@ -234,14 +223,14 @@ fun TarotScreen(
                                 .fillMaxWidth()
                                 .padding(vertical = 4.dp),
                             colors = FilterChipDefaults.filterChipColors(
-                                containerColor = SurfaceCard,
-                                selectedContainerColor = Saffron500.copy(alpha = 0.15f),
-                                labelColor = TextSecondary,
-                                selectedLabelColor = Saffron400
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                selectedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                                labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                selectedLabelColor = MaterialTheme.colorScheme.primary
                             ),
                             border = FilterChipDefaults.filterChipBorder(
-                                borderColor = BorderDark,
-                                selectedBorderColor = Saffron500,
+                                borderColor = MaterialTheme.colorScheme.outline,
+                                selectedBorderColor = MaterialTheme.colorScheme.primary,
                                 enabled = true,
                                 selected = uiState.selectedSpread == spread
                             )
@@ -254,7 +243,7 @@ fun TarotScreen(
                     Text(
                         text = "Your Question (optional)",
                         style = MaterialTheme.typography.titleMedium,
-                        color = TextPrimary
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -263,16 +252,16 @@ fun TarotScreen(
                         onValueChange = { viewModel.updateQuestion(it) },
                         modifier = Modifier.fillMaxWidth(),
                         placeholder = {
-                            Text("What guidance do you seek?", color = TextTertiary)
+                            Text("What guidance do you seek?", color = MaterialTheme.colorScheme.outline)
                         },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Saffron500,
-                            unfocusedBorderColor = BorderDark,
-                            focusedTextColor = TextPrimary,
-                            unfocusedTextColor = TextPrimary,
-                            cursorColor = Saffron500,
-                            focusedContainerColor = SurfaceCard,
-                            unfocusedContainerColor = SurfaceCard
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            cursorColor = MaterialTheme.colorScheme.primary,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
                         ),
                         shape = MaterialTheme.shapes.small,
                         minLines = 3,
@@ -285,7 +274,7 @@ fun TarotScreen(
                         onClick = { viewModel.drawCards() },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.filledTonalButtonColors(
-                            containerColor = Saffron500,
+                            containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = Color.White
                         ),
                         shape = MaterialTheme.shapes.medium
@@ -332,7 +321,7 @@ private fun TarotCardView(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
-                        Cosmic800,
+                        MaterialTheme.colorScheme.surfaceContainerHighest,
                         RoundedCornerShape(12.dp)
                     )
                     .padding(2.dp)
@@ -345,7 +334,7 @@ private fun TarotCardView(
                 Text(
                     text = "?",
                     style = MaterialTheme.typography.headlineLarge,
-                    color = Saffron400,
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
                 )
             }

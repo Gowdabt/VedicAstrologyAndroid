@@ -21,8 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
-import com.astrologyvedic.app.ui.theme.Saffron500
-import com.astrologyvedic.app.ui.theme.TextSecondary
 
 @Composable
 fun LoadingState(
@@ -52,14 +50,14 @@ fun LoadingState(
                 modifier = Modifier
                     .size(48.dp)
                     .alpha(alpha),
-                color = Saffron500,
+                color = MaterialTheme.colorScheme.primary,
                 strokeWidth = 4.dp
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = message,
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextSecondary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

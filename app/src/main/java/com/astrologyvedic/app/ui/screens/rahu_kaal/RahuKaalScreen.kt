@@ -32,16 +32,16 @@ fun RahuKaalScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     Column(
-        modifier = Modifier.fillMaxSize().background(SurfaceDark)
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)
     ) {
         TopAppBar(
-            title = { Text("Rahu Kaal", color = TextPrimary) },
+            title = { Text("Rahu Kaal", color = MaterialTheme.colorScheme.onSurface) },
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Cosmic950)
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
         )
 
         Column(
@@ -67,7 +67,7 @@ fun RahuKaalScreen(
                             Text(
                                 text = "${uiState.todayStart} - ${uiState.todayEnd}",
                                 style = MaterialTheme.typography.headlineMedium,
-                                color = Error,
+                                color = MaterialTheme.colorScheme.error,
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -78,7 +78,7 @@ fun RahuKaalScreen(
                                 .fillMaxWidth()
                                 .height(24.dp)
                                 .clip(RoundedCornerShape(12.dp))
-                                .background(SurfaceCard)
+                                .background(MaterialTheme.colorScheme.surfaceContainer)
                         ) {
                             Box(
                                 modifier = Modifier
@@ -86,20 +86,20 @@ fun RahuKaalScreen(
                                     .fillMaxHeight()
                                     .offset(x = 80.dp)
                                     .clip(RoundedCornerShape(12.dp))
-                                    .background(Error.copy(alpha = 0.7f))
+                                    .background(MaterialTheme.colorScheme.error.copy(alpha = 0.7f))
                             )
                         }
                         Spacer(modifier = Modifier.height(4.dp))
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text("6:00", style = MaterialTheme.typography.bodySmall, color = TextTertiary)
-                            Text("12:00", style = MaterialTheme.typography.bodySmall, color = TextTertiary)
-                            Text("18:00", style = MaterialTheme.typography.bodySmall, color = TextTertiary)
+                            Text("6:00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
+                            Text("12:00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
+                            Text("18:00", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
                         }
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = "Avoid starting new activities during this period",
                             style = MaterialTheme.typography.bodySmall,
-                            color = TextTertiary
+                            color = MaterialTheme.colorScheme.outline
                         )
                     }
                 }
@@ -113,7 +113,7 @@ fun RahuKaalScreen(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(if (timing.isToday) Saffron500.copy(alpha = 0.1f) else androidx.compose.ui.graphics.Color.Transparent)
+                                    .background(if (timing.isToday) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) else androidx.compose.ui.graphics.Color.Transparent)
                                     .padding(vertical = 8.dp, horizontal = 4.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
@@ -121,17 +121,17 @@ fun RahuKaalScreen(
                                 Text(
                                     text = timing.day,
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = if (timing.isToday) Saffron500 else TextPrimary,
+                                    color = if (timing.isToday) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                                     fontWeight = if (timing.isToday) FontWeight.Bold else FontWeight.Normal
                                 )
                                 Text(
                                     text = "${timing.startTime} - ${timing.endTime}",
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = if (timing.isToday) Error else TextSecondary
+                                    color = if (timing.isToday) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                             if (timing != uiState.weekTimings.last()) {
-                                HorizontalDivider(color = BorderDark)
+                                HorizontalDivider(color = MaterialTheme.colorScheme.outline)
                             }
                         }
                     }

@@ -21,9 +21,6 @@ import com.astrologyvedic.app.ui.navigation.AppNavigation
 import com.astrologyvedic.app.ui.navigation.BottomNavBar
 import com.astrologyvedic.app.ui.navigation.Routes
 import com.astrologyvedic.app.ui.navigation.bottomNavItems
-import com.astrologyvedic.app.ui.theme.Cosmic950
-import com.astrologyvedic.app.ui.theme.Saffron500
-import com.astrologyvedic.app.ui.theme.TextPrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,33 +42,6 @@ fun MainScreen() {
     }
 
     Scaffold(
-        topBar = {
-            if (showBottomBar) {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = topBarTitle,
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                    },
-                    actions = {
-                        IconButton(onClick = {
-                            navController.navigate(Routes.Language.route)
-                        }) {
-                            Icon(
-                                imageVector = Icons.Filled.Language,
-                                contentDescription = "Language",
-                                tint = Saffron500
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Cosmic950,
-                        titleContentColor = TextPrimary
-                    )
-                )
-            }
-        },
         bottomBar = {
             if (showBottomBar) {
                 BottomNavBar(
@@ -88,11 +58,11 @@ fun MainScreen() {
                 )
             }
         },
-        containerColor = Cosmic950
+        containerColor = MaterialTheme.colorScheme.background
     ) { innerPadding ->
         AppNavigation(
             navController = navController,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
         )
     }
 }

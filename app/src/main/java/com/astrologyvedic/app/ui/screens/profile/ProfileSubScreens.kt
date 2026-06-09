@@ -25,15 +25,15 @@ import com.astrologyvedic.app.ui.theme.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationsScreen(navController: NavController) {
-    Column(modifier = Modifier.fillMaxSize().background(SurfaceDark)) {
+    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)) {
         TopAppBar(
-            title = { Text("Notifications", color = TextPrimary) },
+            title = { Text("Notifications", color = MaterialTheme.colorScheme.onSurface) },
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Cosmic950)
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
         )
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -56,7 +56,7 @@ fun NotificationsScreen(navController: NavController) {
 private fun NotifCard(title: String, description: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = SurfaceCard),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
         shape = RoundedCornerShape(12.dp)
     ) {
         Row(
@@ -64,15 +64,15 @@ private fun NotifCard(title: String, description: String, checked: Boolean, onCh
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(title, style = MaterialTheme.typography.bodyLarge, color = TextPrimary, fontWeight = FontWeight.Medium)
-                Text(description, style = MaterialTheme.typography.bodySmall, color = TextTertiary)
+                Text(title, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Medium)
+                Text(description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
             }
             Switch(
                 checked = checked,
                 onCheckedChange = onCheckedChange,
                 colors = SwitchDefaults.colors(
-                    checkedThumbColor = Saffron500,
-                    checkedTrackColor = Saffron500.copy(alpha = 0.3f)
+                    checkedThumbColor = MaterialTheme.colorScheme.primary,
+                    checkedTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
                 )
             )
         }
@@ -84,15 +84,15 @@ private fun NotifCard(title: String, description: String, checked: Boolean, onCh
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HelpSupportScreen(navController: NavController) {
-    Column(modifier = Modifier.fillMaxSize().background(SurfaceDark)) {
+    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)) {
         TopAppBar(
-            title = { Text("Help & Support", color = TextPrimary) },
+            title = { Text("Help & Support", color = MaterialTheme.colorScheme.onSurface) },
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Cosmic950)
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
         )
         Column(
             modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
@@ -114,14 +114,14 @@ private fun FaqItem(question: String, answer: String) {
     Card(
         onClick = { expanded = !expanded },
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = SurfaceCard),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(question, style = MaterialTheme.typography.bodyLarge, color = TextPrimary, fontWeight = FontWeight.Medium)
+            Text(question, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Medium)
             if (expanded) {
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(answer, style = MaterialTheme.typography.bodyMedium, color = TextSecondary)
+                Text(answer, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
     }
@@ -141,20 +141,20 @@ fun LanguageScreen(navController: NavController) {
         "తెలుగు (Telugu)" to "తెలుగు"
     )
 
-    Column(modifier = Modifier.fillMaxSize().background(SurfaceDark)) {
+    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)) {
         TopAppBar(
-            title = { Text("Language", color = TextPrimary) },
+            title = { Text("Language", color = MaterialTheme.colorScheme.onSurface) },
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Cosmic950)
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
         )
         Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = SurfaceCard),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
                 shape = RoundedCornerShape(14.dp)
             ) {
                 Column(modifier = Modifier.padding(8.dp)) {
@@ -166,13 +166,13 @@ fun LanguageScreen(navController: NavController) {
                             RadioButton(
                                 selected = selectedLang == index,
                                 onClick = { selectedLang = index },
-                                colors = RadioButtonDefaults.colors(selectedColor = Saffron500)
+                                colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colorScheme.primary)
                             )
                             Spacer(modifier = Modifier.width(12.dp))
-                            Text(name, style = MaterialTheme.typography.bodyLarge, color = TextPrimary)
+                            Text(name, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
                         }
                         if (index < languages.size - 1) {
-                            HorizontalDivider(color = Cosmic800, thickness = 0.5.dp, modifier = Modifier.padding(start = 56.dp))
+                            HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainerHighest, thickness = 0.5.dp, modifier = Modifier.padding(start = 56.dp))
                         }
                     }
                 }
@@ -181,7 +181,7 @@ fun LanguageScreen(navController: NavController) {
             Text(
                 text = "Language changes will apply to all predictions and reports.",
                 style = MaterialTheme.typography.bodySmall,
-                color = TextTertiary
+                color = MaterialTheme.colorScheme.outline
             )
         }
     }
@@ -195,15 +195,15 @@ fun SavedChartsScreen(navController: NavController) {
     val viewModel: ProfileViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    Column(modifier = Modifier.fillMaxSize().background(SurfaceDark)) {
+    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)) {
         TopAppBar(
-            title = { Text("Saved Charts", color = TextPrimary) },
+            title = { Text("Saved Charts", color = MaterialTheme.colorScheme.onSurface) },
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Cosmic950)
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
         )
 
         if (uiState.profiles.isEmpty()) {
@@ -211,34 +211,34 @@ fun SavedChartsScreen(navController: NavController) {
                 modifier = Modifier.fillMaxSize().padding(32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("☉", fontSize = 48.sp, color = TextTertiary)
+                Text("☉", fontSize = 48.sp, color = MaterialTheme.colorScheme.outline)
                 Spacer(modifier = Modifier.height(12.dp))
-                Text("No charts saved yet", style = MaterialTheme.typography.bodyLarge, color = TextSecondary)
-                Text("Generate a Kundli to save a chart", style = MaterialTheme.typography.bodySmall, color = TextTertiary)
+                Text("No charts saved yet", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("Generate a Kundli to save a chart", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
             }
         } else {
             Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp)) {
                 uiState.profiles.forEach { profile ->
                     Card(
                         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                        colors = CardDefaults.cardColors(containerColor = SurfaceCard),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Row(modifier = Modifier.fillMaxWidth().padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
                             Box(
-                                modifier = Modifier.size(40.dp).background(Saffron500.copy(alpha = 0.12f), RoundedCornerShape(10.dp)),
+                                modifier = Modifier.size(40.dp).background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f), RoundedCornerShape(10.dp)),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text(profile.name.firstOrNull()?.uppercase() ?: "?", color = Saffron500, fontWeight = FontWeight.Bold)
+                                Text(profile.name.firstOrNull()?.uppercase() ?: "?", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                             }
                             Spacer(modifier = Modifier.width(12.dp))
                             Column(modifier = Modifier.weight(1f)) {
-                                Text(profile.name, style = MaterialTheme.typography.bodyLarge, color = TextPrimary, fontWeight = FontWeight.Medium)
-                                Text("${profile.dob} • ${profile.place}", style = MaterialTheme.typography.bodySmall, color = TextTertiary)
+                                Text(profile.name, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Medium)
+                                Text("${profile.dob} • ${profile.place}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
                             }
                             if (profile.isDefault) {
-                                Surface(color = Saffron500.copy(alpha = 0.15f), shape = RoundedCornerShape(4.dp)) {
-                                    Text("Default", modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp), fontSize = 9.sp, color = Saffron400, fontWeight = FontWeight.Bold)
+                                Surface(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f), shape = RoundedCornerShape(4.dp)) {
+                                    Text("Default", modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp), fontSize = 9.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                                 }
                             }
                         }
@@ -257,15 +257,15 @@ fun ReportHistoryScreen(navController: NavController) {
     val viewModel: ProfileViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    Column(modifier = Modifier.fillMaxSize().background(SurfaceDark)) {
+    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)) {
         TopAppBar(
-            title = { Text("Report History", color = TextPrimary) },
+            title = { Text("Report History", color = MaterialTheme.colorScheme.onSurface) },
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Cosmic950)
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
         )
 
         if (uiState.reportHistory.isEmpty()) {
@@ -273,23 +273,23 @@ fun ReportHistoryScreen(navController: NavController) {
                 modifier = Modifier.fillMaxSize().padding(32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("❋", fontSize = 48.sp, color = TextTertiary)
+                Text("❋", fontSize = 48.sp, color = MaterialTheme.colorScheme.outline)
                 Spacer(modifier = Modifier.height(12.dp))
-                Text("No reports yet", style = MaterialTheme.typography.bodyLarge, color = TextSecondary)
-                Text("Generate Kundli, Match, or any report to see history", style = MaterialTheme.typography.bodySmall, color = TextTertiary)
+                Text("No reports yet", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("Generate Kundli, Match, or any report to see history", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
             }
         } else {
             Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp)) {
                 uiState.reportHistory.forEach { report ->
                     Card(
                         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                        colors = CardDefaults.cardColors(containerColor = SurfaceCard),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Row(modifier = Modifier.fillMaxWidth().padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
                             Column(modifier = Modifier.weight(1f)) {
-                                Text(report.type, style = MaterialTheme.typography.bodyLarge, color = TextPrimary, fontWeight = FontWeight.Medium)
-                                Text(java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(java.util.Date(report.createdAt)), style = MaterialTheme.typography.bodySmall, color = TextTertiary)
+                                Text(report.type, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Medium)
+                                Text(java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault()).format(java.util.Date(report.createdAt)), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
                             }
                         }
                     }
@@ -309,15 +309,15 @@ fun EditProfileScreen(navController: NavController) {
     var birthTime by remember { mutableStateOf("") }
     var birthPlace by remember { mutableStateOf("") }
 
-    Column(modifier = Modifier.fillMaxSize().background(SurfaceDark)) {
+    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)) {
         TopAppBar(
-            title = { Text("Edit Profile", color = TextPrimary) },
+            title = { Text("Edit Profile", color = MaterialTheme.colorScheme.onSurface) },
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Cosmic950)
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
         )
 
         Column(
@@ -330,12 +330,12 @@ fun EditProfileScreen(navController: NavController) {
                 label = { Text("Full Name") },
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Saffron500,
-                    unfocusedBorderColor = Cosmic700,
-                    focusedLabelColor = Saffron500,
-                    cursorColor = Saffron500,
-                    focusedTextColor = TextPrimary,
-                    unfocusedTextColor = TextPrimary
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.secondaryContainer,
+                    focusedLabelColor = MaterialTheme.colorScheme.primary,
+                    cursorColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                 ),
                 singleLine = true
             )
@@ -345,12 +345,12 @@ fun EditProfileScreen(navController: NavController) {
                 label = { Text("Birth Date (DD/MM/YYYY)") },
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Saffron500,
-                    unfocusedBorderColor = Cosmic700,
-                    focusedLabelColor = Saffron500,
-                    cursorColor = Saffron500,
-                    focusedTextColor = TextPrimary,
-                    unfocusedTextColor = TextPrimary
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.secondaryContainer,
+                    focusedLabelColor = MaterialTheme.colorScheme.primary,
+                    cursorColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                 ),
                 singleLine = true
             )
@@ -360,12 +360,12 @@ fun EditProfileScreen(navController: NavController) {
                 label = { Text("Birth Time (HH:MM)") },
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Saffron500,
-                    unfocusedBorderColor = Cosmic700,
-                    focusedLabelColor = Saffron500,
-                    cursorColor = Saffron500,
-                    focusedTextColor = TextPrimary,
-                    unfocusedTextColor = TextPrimary
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.secondaryContainer,
+                    focusedLabelColor = MaterialTheme.colorScheme.primary,
+                    cursorColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                 ),
                 singleLine = true
             )
@@ -375,12 +375,12 @@ fun EditProfileScreen(navController: NavController) {
                 label = { Text("Birth Place") },
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Saffron500,
-                    unfocusedBorderColor = Cosmic700,
-                    focusedLabelColor = Saffron500,
-                    cursorColor = Saffron500,
-                    focusedTextColor = TextPrimary,
-                    unfocusedTextColor = TextPrimary
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.secondaryContainer,
+                    focusedLabelColor = MaterialTheme.colorScheme.primary,
+                    cursorColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                 ),
                 singleLine = true
             )
@@ -391,7 +391,7 @@ fun EditProfileScreen(navController: NavController) {
                 onClick = { navController.popBackStack() },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.filledTonalButtonColors(
-                    containerColor = Saffron500,
+                    containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = Color.White
                 ),
                 shape = MaterialTheme.shapes.medium

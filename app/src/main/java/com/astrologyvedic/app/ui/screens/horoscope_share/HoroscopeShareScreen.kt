@@ -1,12 +1,12 @@
 package com.astrologyvedic.app.ui.screens.horoscope_share
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.astrologyvedic.app.ui.components.*
@@ -25,29 +26,104 @@ import com.astrologyvedic.app.ui.theme.*
 @Composable
 fun HoroscopeShareScreen(navController: NavController, viewModel: HoroscopeShareViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
-    Column(modifier = Modifier.fillMaxSize().background(SurfaceDark)) {
-        TopAppBar(title = { Text("Share Horoscope", color = TextPrimary) }, navigationIcon = { IconButton(onClick = { navController.popBackStack() }) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary) } }, colors = TopAppBarDefaults.topAppBarColors(containerColor = Cosmic950))
-        Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            if (uiState.isLoading) { LoadingState(message = "Generating shareable card...") }
-            uiState.error?.let { ErrorState(message = it, onRetry = { viewModel.loadHoroscope() }) }
-            if (uiState.hasResult) {
-                Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Cosmic800), shape = MaterialTheme.shapes.large) {
-                    Column(modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("Today's Horoscope", style = MaterialTheme.typography.titleSmall, color = TextTertiary)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(uiState.rashi, style = MaterialTheme.typography.headlineMedium, color = Saffron500, fontWeight = FontWeight.Bold)
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(uiState.prediction, style = MaterialTheme.typography.bodyMedium, color = TextSecondary, textAlign = TextAlign.Center)
-                        Spacer(modifier = Modifier.height(12.dp))
-                        if (uiState.luckyNumber.isNotBlank()) { Text("Lucky Number: ${uiState.luckyNumber}", style = MaterialTheme.typography.bodySmall, color = Saffron400) }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Share Horoscope") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
-                Spacer(modifier = Modifier.height(24.dp))
-                FilledTonalButton(onClick = { /* TODO: Share intent */ }, colors = ButtonDefaults.filledTonalButtonColors(containerColor = Saffron500, contentColor = androidx.compose.ui.graphics.Color.White), shape = MaterialTheme.shapes.medium) {
-                    Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(18.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Share")
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(24.dp))
+
+            if (uiState.isLoading) { LoadingState(message = "Generating shareable card...") }
+            uiState.error?.let { ErrorState(message = it, onRetry = { viewModel.loadHoroscope() }) }
+
+            if (uiState.hasResult) {
+                // Shareable Card Preview
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
+                    shape = MaterialTheme.shapes.extraLarge
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(28.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            "Today's Horoscope",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            uiState.rashi,
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            uiState.prediction,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            textAlign = TextAlign.Center,
+                            lineHeight = 22.sp
+                        )
+
+                        if (uiState.luckyNumber.isNotBlank()) {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Surface(
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                                shape = RoundedCornerShape(16.dp)
+                            ) {
+                                Text(
+                                    text = "Lucky Number: ${uiState.luckyNumber}",
+                                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+                        }
+                    }
                 }
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // Share Button
+                Button(
+                    onClick = { /* TODO: Share intent */ },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    Icon(Icons.Outlined.Share, contentDescription = null, modifier = Modifier.size(20.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Share Horoscope", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
             }
         }
     }

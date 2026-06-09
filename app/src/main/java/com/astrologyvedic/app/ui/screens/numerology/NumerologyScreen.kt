@@ -36,16 +36,16 @@ fun NumerologyScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(SurfaceDark)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         TopAppBar(
-            title = { Text("Numerology", color = TextPrimary) },
+            title = { Text("Numerology", color = MaterialTheme.colorScheme.onSurface) },
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Cosmic950)
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
         )
 
         Column(
@@ -58,13 +58,13 @@ fun NumerologyScreen(
                 Text(
                     text = "Discover your numerology numbers",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = TextSecondary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = SurfaceCardElevated),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
                     shape = MaterialTheme.shapes.medium
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
@@ -72,16 +72,16 @@ fun NumerologyScreen(
                             value = uiState.name,
                             onValueChange = { viewModel.updateName(it) },
                             label = { Text("Full Name") },
-                            leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = TextTertiary) },
+                            leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = MaterialTheme.colorScheme.outline) },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Saffron500,
-                                unfocusedBorderColor = BorderDark,
-                                focusedTextColor = TextPrimary,
-                                unfocusedTextColor = TextPrimary,
-                                cursorColor = Saffron500,
-                                focusedContainerColor = SurfaceCard,
-                                unfocusedContainerColor = SurfaceCard
+                                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                cursorColor = MaterialTheme.colorScheme.primary,
+                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
                             ),
                             shape = MaterialTheme.shapes.small,
                             singleLine = true
@@ -91,16 +91,16 @@ fun NumerologyScreen(
                             value = uiState.dob,
                             onValueChange = { viewModel.updateDob(it) },
                             label = { Text("Date of Birth (DD/MM/YYYY)") },
-                            leadingIcon = { Icon(Icons.Default.CalendarMonth, contentDescription = null, tint = TextTertiary) },
+                            leadingIcon = { Icon(Icons.Default.CalendarMonth, contentDescription = null, tint = MaterialTheme.colorScheme.outline) },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Saffron500,
-                                unfocusedBorderColor = BorderDark,
-                                focusedTextColor = TextPrimary,
-                                unfocusedTextColor = TextPrimary,
-                                cursorColor = Saffron500,
-                                focusedContainerColor = SurfaceCard,
-                                unfocusedContainerColor = SurfaceCard
+                                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                cursorColor = MaterialTheme.colorScheme.primary,
+                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
                             ),
                             shape = MaterialTheme.shapes.small,
                             singleLine = true
@@ -115,7 +115,7 @@ fun NumerologyScreen(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = uiState.name.isNotBlank() && uiState.dob.isNotBlank(),
                     colors = ButtonDefaults.filledTonalButtonColors(
-                        containerColor = Saffron500,
+                        containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = Color.White
                     ),
                     shape = MaterialTheme.shapes.medium
@@ -139,14 +139,14 @@ fun NumerologyScreen(
                             Text(
                                 text = "${number.value}",
                                 style = MaterialTheme.typography.displaySmall,
-                                color = Saffron500,
+                                color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 text = number.meaning,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = TextSecondary
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }

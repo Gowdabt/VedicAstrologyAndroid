@@ -49,17 +49,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import com.astrologyvedic.app.data.api.models.PersonRequest
 import com.astrologyvedic.app.data.repository.LocationRepository
-import com.astrologyvedic.app.ui.theme.BorderDark
 import com.astrologyvedic.app.util.LocationHelper
 import com.astrologyvedic.app.util.GpsLocationResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import com.astrologyvedic.app.ui.theme.Saffron500
-import com.astrologyvedic.app.ui.theme.SurfaceCard
-import com.astrologyvedic.app.ui.theme.SurfaceCardElevated
-import com.astrologyvedic.app.ui.theme.TextPrimary
-import com.astrologyvedic.app.ui.theme.TextSecondary
-import com.astrologyvedic.app.ui.theme.TextTertiary
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -172,20 +165,20 @@ fun PersonForm(
     }
 
     val textFieldColors = OutlinedTextFieldDefaults.colors(
-        focusedBorderColor = Saffron500,
-        unfocusedBorderColor = BorderDark,
-        focusedTextColor = TextPrimary,
-        unfocusedTextColor = TextPrimary,
-        cursorColor = Saffron500,
-        focusedContainerColor = SurfaceCard,
-        unfocusedContainerColor = SurfaceCard,
-        focusedLabelColor = Saffron500,
-        unfocusedLabelColor = TextTertiary
+        focusedBorderColor = MaterialTheme.colorScheme.primary,
+        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+        unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+        cursorColor = MaterialTheme.colorScheme.primary,
+        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+        focusedLabelColor = MaterialTheme.colorScheme.primary,
+        unfocusedLabelColor = MaterialTheme.colorScheme.outline
     )
 
     Card(
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = SurfaceCardElevated),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
         shape = MaterialTheme.shapes.medium
     ) {
         Column(
@@ -196,7 +189,7 @@ fun PersonForm(
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
-                color = TextPrimary
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -206,7 +199,7 @@ fun PersonForm(
                 onValueChange = { onStateChange(state.copy(name = it)) },
                 label = { Text("Full Name") },
                 leadingIcon = {
-                    Icon(Icons.Default.Person, contentDescription = null, tint = TextTertiary)
+                    Icon(Icons.Default.Person, contentDescription = null, tint = MaterialTheme.colorScheme.outline)
                 },
                 modifier = Modifier.fillMaxWidth(),
                 colors = textFieldColors,
@@ -221,11 +214,11 @@ fun PersonForm(
                 onValueChange = { onStateChange(state.copy(dob = it)) },
                 label = { Text("Date of Birth (DD/MM/YYYY)") },
                 leadingIcon = {
-                    Icon(Icons.Default.CalendarMonth, contentDescription = null, tint = TextTertiary)
+                    Icon(Icons.Default.CalendarMonth, contentDescription = null, tint = MaterialTheme.colorScheme.outline)
                 },
                 trailingIcon = {
                     IconButton(onClick = { showDatePicker = true }) {
-                        Icon(Icons.Default.CalendarMonth, contentDescription = "Pick date", tint = Saffron500)
+                        Icon(Icons.Default.CalendarMonth, contentDescription = "Pick date", tint = MaterialTheme.colorScheme.primary)
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -242,11 +235,11 @@ fun PersonForm(
                 onValueChange = { onStateChange(state.copy(time = it)) },
                 label = { Text("Birth Time (HH:MM)") },
                 leadingIcon = {
-                    Icon(Icons.Default.AccessTime, contentDescription = null, tint = TextTertiary)
+                    Icon(Icons.Default.AccessTime, contentDescription = null, tint = MaterialTheme.colorScheme.outline)
                 },
                 trailingIcon = {
                     IconButton(onClick = { showTimePicker = true }) {
-                        Icon(Icons.Default.AccessTime, contentDescription = "Pick time", tint = Saffron500)
+                        Icon(Icons.Default.AccessTime, contentDescription = "Pick time", tint = MaterialTheme.colorScheme.primary)
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -286,15 +279,15 @@ fun PersonForm(
                 onClick = onUseCurrentLocation,
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Saffron500.copy(alpha = 0.1f),
-                    contentColor = Saffron500
+                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                    contentColor = MaterialTheme.colorScheme.primary
                 ),
                 enabled = !isLoadingLocation
             ) {
                 if (isLoadingLocation) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(20.dp),
-                        color = Saffron500,
+                        color = MaterialTheme.colorScheme.primary,
                         strokeWidth = 2.dp
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -351,7 +344,7 @@ fun PersonForm(
             Text(
                 text = "Leave lat/lng empty to use default coordinates (recommended: enter accurate coordinates for best results)",
                 style = MaterialTheme.typography.bodySmall,
-                color = TextTertiary,
+                color = MaterialTheme.colorScheme.outline,
                 modifier = Modifier.padding(top = 4.dp)
             )
         }
@@ -372,12 +365,12 @@ fun PersonForm(
                     }
                     showDatePicker = false
                 }) {
-                    Text("OK", color = Saffron500)
+                    Text("OK", color = MaterialTheme.colorScheme.primary)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) {
-                    Text("Cancel", color = TextSecondary)
+                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         ) {
@@ -394,7 +387,7 @@ fun PersonForm(
         )
         Dialog(onDismissRequest = { showTimePicker = false }) {
             Card(
-                colors = CardDefaults.cardColors(containerColor = SurfaceCardElevated),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
                 shape = MaterialTheme.shapes.large
             ) {
                 Column(
@@ -404,7 +397,7 @@ fun PersonForm(
                     Text(
                         text = "Select Birth Time",
                         style = MaterialTheme.typography.titleMedium,
-                        color = TextPrimary
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     TimePicker(state = timePickerState)
@@ -414,7 +407,7 @@ fun PersonForm(
                         horizontalArrangement = Arrangement.End
                     ) {
                         TextButton(onClick = { showTimePicker = false }) {
-                            Text("Cancel", color = TextSecondary)
+                            Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         TextButton(onClick = {
@@ -426,7 +419,7 @@ fun PersonForm(
                             onStateChange(state.copy(time = formatted))
                             showTimePicker = false
                         }) {
-                            Text("OK", color = Saffron500)
+                            Text("OK", color = MaterialTheme.colorScheme.primary)
                         }
                     }
                 }

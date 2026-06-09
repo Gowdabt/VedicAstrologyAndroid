@@ -19,11 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.astrologyvedic.app.ui.theme.Error
-import com.astrologyvedic.app.ui.theme.Saffron500
-import com.astrologyvedic.app.ui.theme.SurfaceCard
-import com.astrologyvedic.app.ui.theme.TextPrimary
-import com.astrologyvedic.app.ui.theme.TextSecondary
 
 @Composable
 fun ErrorState(
@@ -43,13 +38,13 @@ fun ErrorState(
                 imageVector = Icons.Default.ErrorOutline,
                 contentDescription = "Error",
                 modifier = Modifier.size(56.dp),
-                tint = Error
+                tint = MaterialTheme.colorScheme.error
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = message,
                 style = MaterialTheme.typography.bodyLarge,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
             if (onRetry != null) {
@@ -57,8 +52,8 @@ fun ErrorState(
                 FilledTonalButton(
                     onClick = onRetry,
                     colors = ButtonDefaults.filledTonalButtonColors(
-                        containerColor = SurfaceCard,
-                        contentColor = Saffron500
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        contentColor = MaterialTheme.colorScheme.primary
                     )
                 ) {
                     Text("Retry")

@@ -8,10 +8,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.EventNote
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
@@ -30,76 +32,198 @@ fun VratCalendarScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    Column(modifier = Modifier.fillMaxSize().background(SurfaceDark)) {
-        TopAppBar(
-            title = { Text("Vrat Calendar", color = TextPrimary) },
-            navigationIcon = {
-                IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
-                }
-            },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Cosmic950)
-        )
-
-        // Month selector
-        Row(
-            modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            viewModel.months.forEach { month ->
-                FilterChip(
-                    selected = uiState.selectedMonth == month,
-                    onClick = { viewModel.selectMonth(month) },
-                    label = { Text(month.take(3)) },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = Saffron500,
-                        selectedLabelColor = androidx.compose.ui.graphics.Color.White,
-                        containerColor = SurfaceCardElevated,
-                        labelColor = TextSecondary
-                    )
-                )
-            }
-        }
-
-        if (uiState.isLoading) {
-            LoadingState(message = "Loading vrat dates...")
-        } else if (uiState.error != null) {
-            ErrorState(message = uiState.error!!, onRetry = { viewModel.loadVrats() })
-        } else {
-            Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp)) {
-                uiState.vrats.forEach { vrat ->
-                    val typeColor = when (vrat.type.lowercase()) {
-                        "ekadashi" -> Saffron500
-                        "pradosh" -> Cosmic400
-                        "amavasya" -> Error
-                        "purnima" -> Success
-                        else -> TextSecondary
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Vrat Calendar") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
+                }
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            // Month Selector
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                viewModel.months.forEach { month ->
+                    FilterChip(
+                        selected = uiState.selectedMonth == month,
+                        onClick = { viewModel.selectMonth(month) },
+                        label = { Text(month.take(3)) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.primary,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    )
+                }
+            }
+
+            if (uiState.isLoading) {
+                LoadingState(message = "Loading vrat dates...")
+            } else if (uiState.error != null) {
+                ErrorState(message = uiState.error!!, onRetry = { viewModel.loadVrats() })
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp)
+                ) {
+                    // Info Header
                     Card(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                        colors = CardDefaults.cardColors(containerColor = SurfaceCardElevated),
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                        ),
                         shape = MaterialTheme.shapes.medium
                     ) {
-                        Row(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
-                            Box(
-                                modifier = Modifier
-                                    .width(4.dp)
-                                    .height(40.dp)
-                                    .clip(RoundedCornerShape(2.dp))
-                                    .background(typeColor)
+                        Row(
+                            modifier = Modifier.padding(14.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Outlined.EventNote,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                modifier = Modifier.size(22.dp)
                             )
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(vrat.name, style = MaterialTheme.typography.bodyLarge, color = TextPrimary, fontWeight = FontWeight.Medium)
-                                Text(vrat.type, style = MaterialTheme.typography.bodySmall, color = typeColor)
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Column {
+                                Text(
+                                    text = "${uiState.selectedMonth} 2026",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                                Text(
+                                    text = "${uiState.vrats.size} fasting days",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                                )
                             }
-                            Text(vrat.date, style = MaterialTheme.typography.bodyMedium, color = TextSecondary)
                         }
                     }
-                }
 
-                if (uiState.vrats.isEmpty() && uiState.hasResult) {
-                    Text("No vrat dates found for this month", style = MaterialTheme.typography.bodyMedium, color = TextSecondary)
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // Vrat List
+                    uiState.vrats.forEach { vrat ->
+                        val typeColor = when (vrat.type.lowercase()) {
+                            "ekadashi" -> MaterialTheme.colorScheme.primary
+                            "pradosh" -> MaterialTheme.colorScheme.secondary
+                            "amavasya" -> MaterialTheme.colorScheme.error
+                            "purnima" -> Success
+                            else -> MaterialTheme.colorScheme.tertiary
+                        }
+
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                            ),
+                            shape = MaterialTheme.shapes.medium
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(14.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                // Color indicator bar
+                                Box(
+                                    modifier = Modifier
+                                        .width(4.dp)
+                                        .height(40.dp)
+                                        .clip(RoundedCornerShape(2.dp))
+                                        .background(typeColor)
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = vrat.name,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.Medium,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Surface(
+                                        color = typeColor.copy(alpha = 0.12f),
+                                        shape = RoundedCornerShape(8.dp)
+                                    ) {
+                                        Text(
+                                            text = vrat.type,
+                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = typeColor,
+                                            fontWeight = FontWeight.SemiBold
+                                        )
+                                    }
+                                }
+
+                                // Date badge
+                                Surface(
+                                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    shape = RoundedCornerShape(8.dp)
+                                ) {
+                                    Text(
+                                        text = vrat.date,
+                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    if (uiState.vrats.isEmpty() && uiState.hasResult) {
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                            ),
+                            shape = MaterialTheme.shapes.medium
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(24.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Icon(
+                                    Icons.AutoMirrored.Outlined.EventNote,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(32.dp)
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "No vrat dates found for ${uiState.selectedMonth}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
                 }
             }
         }

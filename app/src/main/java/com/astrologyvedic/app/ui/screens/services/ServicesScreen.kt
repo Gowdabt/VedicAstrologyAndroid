@@ -1,196 +1,353 @@
 package com.astrologyvedic.app.ui.screens.services
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Chat
+import androidx.compose.material.icons.outlined.Calculate
+import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.ChevronRight
+import androidx.compose.material.icons.outlined.Diamond
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.FilterList
+import androidx.compose.material.icons.outlined.Place
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.SelfImprovement
+import androidx.compose.material.icons.outlined.Stars
+import androidx.compose.material.icons.outlined.Style
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.astrologyvedic.app.ui.navigation.Routes
-import com.astrologyvedic.app.ui.theme.*
 
-data class ServiceItem(
+// --- Data models ---
+
+private data class ServiceItem(
     val title: String,
-    val subtitle: String,
+    val description: String,
     val route: String,
-    val iconChar: String,
-    val iconColor: Color
+    val icon: ImageVector,
+    val iconTint: @Composable () -> Color
 )
 
-data class ServiceCategory(
+private data class ServiceCategory(
     val name: String,
     val items: List<ServiceItem>
 )
 
-private val serviceCategories = listOf(
-    ServiceCategory(
-        name = "Core Astrology",
-        items = listOf(
-            ServiceItem("Kundli", "Complete birth chart with Dashas & Yogas", Routes.Kundli.route, "☉", Color(0xFFf97316)),
-            ServiceItem("Daily Horoscope", "Personalized daily predictions", Routes.Daily.route, "☽", Color(0xFF3b82f6)),
-            ServiceItem("Kundli Match", "Ashta-Koota Guna Milan", Routes.Match.route, "♥", Color(0xFFec4899)),
-            ServiceItem("Timeline", "Dasha & transit predictions", Routes.Timeline.route, "⟳", Color(0xFFa855f7)),
-            ServiceItem("Panchang", "Daily Tithi, Nakshatra, Yoga & more", Routes.Panchang.route, "☸", Color(0xFFeab308)),
-            ServiceItem("Transit Report", "Current planetary transits effect", Routes.Transit.route, "⊕", Color(0xFF06b6d4))
-        )
-    ),
-    ServiceCategory(
-        name = "AI-Powered",
-        items = listOf(
-            ServiceItem("AI Astrologer", "Chat with AI for personalized answers", Routes.AiChat.route, "✧", Color(0xFF8b5cf6)),
-            ServiceItem("Palm Reading", "AI-powered palm line analysis", Routes.PalmReading.route, "✋", Color(0xFF7c3aed)),
-            ServiceItem("Face Reading", "Personality from facial features", Routes.FaceReading.route, "◉", Color(0xFFf43f5e)),
-            ServiceItem("Tarot", "Draw cards for mystical insights", Routes.Tarot.route, "✦", Color(0xFF6d28d9)),
-            ServiceItem("Life Report", "Complete 8-section life analysis", Routes.LifeReport.route, "❋", Color(0xFFf59e0b)),
-            ServiceItem("Pathfinder", "When will I marry? Job or business?", Routes.Pathfinder.route, "⊛", Color(0xFF10b981)),
-            ServiceItem("Yoga Detection", "1000+ planetary yoga analysis", Routes.YogaDetection.route, "△", Color(0xFF14b8a6))
-        )
-    ),
-    ServiceCategory(
-        name = "Compatibility",
-        items = listOf(
-            ServiceItem("Love Compatibility", "Romantic compatibility check", Routes.LoveCompatibility.route, "♡", Color(0xFFec4899)),
-            ServiceItem("Guna Milan", "36-point Nakshatra matching", Routes.GunaMilan.route, "⚭", Color(0xFFf97316)),
-            ServiceItem("Name Match", "Compatibility from names", Routes.NameMatch.route, "A⟷B", Color(0xFF3b82f6)),
-            ServiceItem("Porutham", "South Indian 10-point matching", Routes.Porutham.route, "⚜", Color(0xFF10b981))
-        )
-    ),
-    ServiceCategory(
-        name = "Astrology Systems",
-        items = listOf(
-            ServiceItem("KP Astrology", "Krishnamurti Paddhati predictions", Routes.KpAstrology.route, "KP", Color(0xFF06b6d4)),
-            ServiceItem("Lal Kitab", "Red Book remedies & predictions", Routes.LalKitab.route, "◈", Color(0xFFef4444)),
-            ServiceItem("Western", "Tropical zodiac with aspects", Routes.Western.route, "♈", Color(0xFF6366f1)),
-            ServiceItem("Chinese Zodiac", "Animal sign & compatibility", Routes.ChineseZodiac.route, "龍", Color(0xFFdc2626)),
-            ServiceItem("Nadi", "Nadi-based predictions", Routes.Nadi.route, "☯", Color(0xFF8b5cf6))
-        )
-    ),
-    ServiceCategory(
-        name = "Charts & Divisions",
-        items = listOf(
-            ServiceItem("Navamsa D9", "Marriage & spiritual chart", Routes.Navamsa.route, "D9", Color(0xFF7c3aed)),
-            ServiceItem("Dasamsa D10", "Career divisional chart", Routes.Dasamsa.route, "D10", Color(0xFF14b8a6)),
-            ServiceItem("Varga Charts", "All 16 divisional charts", Routes.VargaCharts.route, "D∞", Color(0xFFa855f7)),
-            ServiceItem("Chart Comparison", "Side-by-side chart analysis", Routes.ChartComparison.route, "⇔", Color(0xFF3b82f6)),
-            ServiceItem("Celebrity Charts", "Famous personalities' charts", Routes.Celebrity.route, "★", Color(0xFFf59e0b))
-        )
-    ),
-    ServiceCategory(
-        name = "Spiritual & Devotional",
-        items = listOf(
-            ServiceItem("Puja Guide", "Step-by-step worship instructions", Routes.PujaGuide.route, "🙏", Color(0xFFf97316)),
-            ServiceItem("Jaap Counter", "Digital mala for chanting", Routes.MantraCounter.route, "⊙", Color(0xFFeab308)),
-            ServiceItem("Festivals", "Hindu festivals & vrat calendar", Routes.Festivals.route, "◐", Color(0xFF10b981)),
-            ServiceItem("Daily Mantra", "Personalized mantra for today", Routes.DailyMantra.route, "ॐ", Color(0xFFa855f7)),
-            ServiceItem("Meditation", "Guided meditation with hora awareness", Routes.Meditation.route, "◎", Color(0xFF06b6d4)),
-            ServiceItem("Prayers", "Stotra & prayer collection", Routes.Prayers.route, "☙", Color(0xFFf43f5e)),
-            ServiceItem("Homa Guide", "DIY fire ritual instructions", Routes.HomaGuide.route, "♨", Color(0xFFef4444)),
-            ServiceItem("Vrat Calendar", "Personalized fasting days", Routes.VratCalendar.route, "☾", Color(0xFF3b82f6))
-        )
-    ),
-    ServiceCategory(
-        name = "More",
-        items = listOf(
-            ServiceItem("Past Life", "Previous birth karma analysis", Routes.PastLife.route, "↺", Color(0xFF8b5cf6)),
-            ServiceItem("Baby Names", "Nakshatra-based name suggestions", Routes.BabyNames.route, "Aa", Color(0xFFec4899)),
-            ServiceItem("Lucky Today", "Daily lucky number & color", Routes.Lucky.route, "☘", Color(0xFFeab308)),
-            ServiceItem("Stock Astrology", "Planetary market influence", Routes.StockAstrology.route, "↗", Color(0xFF10b981)),
-            ServiceItem("Birth Rectification", "Calculate birth time from events", Routes.BirthRectification.route, "⧖", Color(0xFF3b82f6)),
-            ServiceItem("Gemstone", "Personalized gemstone guide", Routes.Gemstone.route, "◆", Color(0xFF06b6d4)),
-            ServiceItem("Vastu", "Directional & spatial analysis", Routes.Vastu.route, "⌂", Color(0xFFf97316))
-        )
-    )
-)
+// --- Service data ---
 
 @Composable
+private fun serviceCategories(): List<ServiceCategory> {
+    val cs = MaterialTheme.colorScheme
+    return listOf(
+        ServiceCategory(
+            name = "BIRTH CHART",
+            items = listOf(
+                ServiceItem(
+                    title = "Kundli",
+                    description = "Your detailed birth map and planetary positions.",
+                    route = Routes.Kundli.route,
+                    icon = Icons.Outlined.Stars,
+                    iconTint = { cs.primary }
+                ),
+                ServiceItem(
+                    title = "Navamsa",
+                    description = "The D9 chart for marriage and hidden strengths.",
+                    route = Routes.Navamsa.route,
+                    icon = Icons.Outlined.Stars,
+                    iconTint = { cs.primary }
+                )
+            )
+        ),
+        ServiceCategory(
+            name = "COMPATIBILITY",
+            items = listOf(
+                ServiceItem(
+                    title = "Match Making",
+                    description = "In-depth synastry report for couples.",
+                    route = Routes.Match.route,
+                    icon = Icons.Outlined.FavoriteBorder,
+                    iconTint = { cs.error }
+                ),
+                ServiceItem(
+                    title = "Guna Milan",
+                    description = "Traditional 36-point ashtakoot matching.",
+                    route = Routes.GunaMilan.route,
+                    icon = Icons.Outlined.FavoriteBorder,
+                    iconTint = { cs.error }
+                )
+            )
+        ),
+        ServiceCategory(
+            name = "DAILY PREDICTIONS",
+            items = listOf(
+                ServiceItem(
+                    title = "Daily Horoscope",
+                    description = "Your personalized forecast for today.",
+                    route = Routes.Daily.route,
+                    icon = Icons.Outlined.CalendarMonth,
+                    iconTint = { cs.tertiary }
+                ),
+                ServiceItem(
+                    title = "Panchang",
+                    description = "Auspicious times and tithi details.",
+                    route = Routes.Panchang.route,
+                    icon = Icons.Outlined.CalendarMonth,
+                    iconTint = { cs.tertiary }
+                )
+            )
+        ),
+        ServiceCategory(
+            name = "REMEDIES",
+            items = listOf(
+                ServiceItem(
+                    title = "Gemstone",
+                    description = "Recommendation for strengthening planets.",
+                    route = Routes.Gemstone.route,
+                    icon = Icons.Outlined.Diamond,
+                    iconTint = { cs.secondary }
+                ),
+                ServiceItem(
+                    title = "Puja Guide",
+                    description = "Vedic rituals for prosperity and peace.",
+                    route = Routes.PujaGuide.route,
+                    icon = Icons.Outlined.SelfImprovement,
+                    iconTint = { cs.secondary }
+                )
+            )
+        ),
+        ServiceCategory(
+            name = "TOOLS",
+            items = listOf(
+                ServiceItem(
+                    title = "Numerology",
+                    description = "Explore the power of numbers in your life.",
+                    route = Routes.Numerology.route,
+                    icon = Icons.Outlined.Calculate,
+                    iconTint = { cs.primary }
+                ),
+                ServiceItem(
+                    title = "Tarot",
+                    description = "Draw cards for mystical insights.",
+                    route = Routes.Tarot.route,
+                    icon = Icons.Outlined.Style,
+                    iconTint = { cs.tertiary }
+                ),
+                ServiceItem(
+                    title = "Temple Finder",
+                    description = "Locate nearby temples and sacred sites.",
+                    route = Routes.TempleFinder.route,
+                    icon = Icons.Outlined.Place,
+                    iconTint = { cs.error }
+                )
+            )
+        )
+    )
+}
+
+// --- Screen composable ---
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun ServicesScreen(navController: NavController) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(6.dp)
-    ) {
-        serviceCategories.forEach { category ->
-            item {
-                Text(
-                    text = category.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Saffron400,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(top = 12.dp, bottom = 6.dp)
+    val categories = serviceCategories()
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Services",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                actions = {
+                    IconButton(onClick = { /* TODO: search */ }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Search,
+                            contentDescription = "Search"
+                        )
+                    }
+                    IconButton(onClick = { /* TODO: filter */ }) {
+                        Icon(
+                            imageVector = Icons.Outlined.FilterList,
+                            contentDescription = "Filter"
+                        )
+                    }
+                }
+            )
+        },
+        floatingActionButton = {
+            SmallFloatingActionButton(
+                onClick = { navController.navigate(Routes.AiChat.route) },
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Outlined.Chat,
+                    contentDescription = "Chat"
                 )
             }
-            items(category.items) { service ->
-                ServiceCard(service = service, onClick = { navController.navigate(service.route) })
-            }
         }
-        item { Spacer(modifier = Modifier.height(16.dp)) }
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            // Hero banner card
+            item {
+                HeroBannerCard()
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+
+            // Categorized service list
+            categories.forEach { category ->
+                item {
+                    Text(
+                        text = category.name,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                    )
+                }
+                items(category.items) { service ->
+                    ServiceListItem(
+                        service = service,
+                        onClick = { navController.navigate(service.route) }
+                    )
+                }
+            }
+
+            // Bottom spacer for FAB clearance
+            item { Spacer(modifier = Modifier.height(80.dp)) }
+        }
     }
 }
 
+// --- Hero banner ---
+
 @Composable
-private fun ServiceCard(service: ServiceItem, onClick: () -> Unit) {
+private fun HeroBannerCard() {
     Card(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .animateContentSize(),
-        colors = CardDefaults.cardColors(containerColor = SurfaceCard),
-        shape = RoundedCornerShape(12.dp)
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        )
     ) {
-        Row(
-            modifier = Modifier.padding(14.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier.padding(24.dp)
         ) {
-            // Icon
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(service.iconColor.copy(alpha = 0.15f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = service.iconChar,
-                    color = service.iconColor,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Spacer(modifier = Modifier.width(14.dp))
-            // Text
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = service.title,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = TextPrimary,
-                    fontWeight = FontWeight.SemiBold
-                )
-                Text(
-                    text = service.subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TextTertiary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    lineHeight = 16.sp
-                )
-            }
-            // Arrow
             Text(
-                text = "›",
-                color = TextTertiary,
-                fontSize = 20.sp
+                text = "Explore the Cosmos",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Expert Vedic guidance tailored to your celestial alignment.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
             )
         }
+    }
+}
+
+// --- Service list item ---
+
+@Composable
+private fun ServiceListItem(service: ServiceItem, onClick: () -> Unit) {
+    Surface(
+        onClick = onClick,
+        color = Color.Transparent,
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        ListItem(
+            headlineContent = {
+                Text(
+                    text = service.title,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Medium
+                )
+            },
+            supportingContent = {
+                Text(
+                    text = service.description,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            },
+            leadingContent = {
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = service.iconTint().copy(alpha = 0.12f),
+                    modifier = Modifier.size(40.dp)
+                ) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Icon(
+                            imageVector = service.icon,
+                            contentDescription = service.title,
+                            tint = service.iconTint(),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+            },
+            trailingContent = {
+                Icon(
+                    imageVector = Icons.Outlined.ChevronRight,
+                    contentDescription = "Navigate",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ListItemDefaults.colors(
+                containerColor = Color.Transparent
+            ),
+            tonalElevation = 0.dp
+        )
     }
 }

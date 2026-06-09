@@ -51,18 +51,6 @@ import androidx.navigation.NavController
 import com.astrologyvedic.app.ui.components.ErrorState
 import com.astrologyvedic.app.ui.components.LoadingState
 import com.astrologyvedic.app.ui.components.ResultCard
-import com.astrologyvedic.app.ui.theme.BorderDark
-import com.astrologyvedic.app.ui.theme.Cosmic800
-import com.astrologyvedic.app.ui.theme.Cosmic950
-import com.astrologyvedic.app.ui.theme.Error
-import com.astrologyvedic.app.ui.theme.Saffron400
-import com.astrologyvedic.app.ui.theme.Saffron500
-import com.astrologyvedic.app.ui.theme.SurfaceCard
-import com.astrologyvedic.app.ui.theme.SurfaceCardElevated
-import com.astrologyvedic.app.ui.theme.SurfaceDark
-import com.astrologyvedic.app.ui.theme.TextPrimary
-import com.astrologyvedic.app.ui.theme.TextSecondary
-import com.astrologyvedic.app.ui.theme.TextTertiary
 import com.astrologyvedic.app.ui.theme.Warning
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -81,21 +69,21 @@ fun PanchangScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(SurfaceDark)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         TopAppBar(
-            title = { Text("Panchang", color = TextPrimary) },
+            title = { Text("Panchang", color = MaterialTheme.colorScheme.onSurface) },
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                 }
             },
             actions = {
                 IconButton(onClick = { /* TODO: Share */ }) {
-                    Icon(Icons.Default.Share, contentDescription = "Share", tint = Saffron500)
+                    Icon(Icons.Default.Share, contentDescription = "Share", tint = MaterialTheme.colorScheme.primary)
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Cosmic950)
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
         )
 
         when {
@@ -121,22 +109,22 @@ fun PanchangScreen(
                         onValueChange = {},
                         label = { Text("Date") },
                         leadingIcon = {
-                            Icon(Icons.Default.CalendarMonth, contentDescription = null, tint = TextTertiary)
+                            Icon(Icons.Default.CalendarMonth, contentDescription = null, tint = MaterialTheme.colorScheme.outline)
                         },
                         trailingIcon = {
                             IconButton(onClick = { showDatePicker = true }) {
-                                Icon(Icons.Default.CalendarMonth, contentDescription = "Pick date", tint = Saffron500)
+                                Icon(Icons.Default.CalendarMonth, contentDescription = "Pick date", tint = MaterialTheme.colorScheme.primary)
                             }
                         },
                         modifier = Modifier.fillMaxWidth(),
                         readOnly = true,
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Saffron500,
-                            unfocusedBorderColor = BorderDark,
-                            focusedTextColor = TextPrimary,
-                            unfocusedTextColor = TextPrimary,
-                            focusedContainerColor = SurfaceCard,
-                            unfocusedContainerColor = SurfaceCard
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
                         ),
                         shape = MaterialTheme.shapes.small
                     )
@@ -149,16 +137,16 @@ fun PanchangScreen(
                         onValueChange = { viewModel.updateLocation(it) },
                         label = { Text("Location (optional)") },
                         leadingIcon = {
-                            Icon(Icons.Default.LocationOn, contentDescription = null, tint = TextTertiary)
+                            Icon(Icons.Default.LocationOn, contentDescription = null, tint = MaterialTheme.colorScheme.outline)
                         },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Saffron500,
-                            unfocusedBorderColor = BorderDark,
-                            focusedTextColor = TextPrimary,
-                            unfocusedTextColor = TextPrimary,
-                            focusedContainerColor = SurfaceCard,
-                            unfocusedContainerColor = SurfaceCard
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
                         ),
                         shape = MaterialTheme.shapes.small,
                         singleLine = true
@@ -170,7 +158,7 @@ fun PanchangScreen(
                         // Sunrise/Sunset card
                         Card(
                             modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(containerColor = SurfaceCardElevated),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
                             shape = MaterialTheme.shapes.medium
                         ) {
                             Row(
@@ -183,23 +171,23 @@ fun PanchangScreen(
                                     Icon(
                                         Icons.Default.WbSunny,
                                         contentDescription = "Sunrise",
-                                        tint = Saffron400,
+                                        tint = MaterialTheme.colorScheme.primary,
                                         modifier = Modifier.size(28.dp)
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
-                                    Text("Sunrise", style = MaterialTheme.typography.bodySmall, color = TextTertiary)
-                                    Text(data.sunrise, style = MaterialTheme.typography.titleSmall, color = TextPrimary, fontWeight = FontWeight.Bold)
+                                    Text("Sunrise", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
+                                    Text(data.sunrise, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
                                 }
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                     Icon(
                                         Icons.Default.WbTwilight,
                                         contentDescription = "Sunset",
-                                        tint = Saffron400,
+                                        tint = MaterialTheme.colorScheme.primary,
                                         modifier = Modifier.size(28.dp)
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
-                                    Text("Sunset", style = MaterialTheme.typography.bodySmall, color = TextTertiary)
-                                    Text(data.sunset, style = MaterialTheme.typography.titleSmall, color = TextPrimary, fontWeight = FontWeight.Bold)
+                                    Text("Sunset", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
+                                    Text(data.sunset, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
                                 }
                             }
                         }
@@ -210,11 +198,11 @@ fun PanchangScreen(
                         ResultCard(title = "Panchang Details") {
                             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                                 PanchangRow("Tithi", data.tithi)
-                                HorizontalDivider(color = Cosmic800.copy(alpha = 0.5f))
+                                HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
                                 PanchangRow("Nakshatra", data.nakshatra)
-                                HorizontalDivider(color = Cosmic800.copy(alpha = 0.5f))
+                                HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
                                 PanchangRow("Yoga", data.yoga)
-                                HorizontalDivider(color = Cosmic800.copy(alpha = 0.5f))
+                                HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
                                 PanchangRow("Karana", data.karana)
                             }
                         }
@@ -224,10 +212,10 @@ fun PanchangScreen(
                         // Inauspicious timings
                         ResultCard(title = "Inauspicious Timings") {
                             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                TimingRow("Rahu Kaal", data.rahuKaal, Error)
-                                HorizontalDivider(color = Cosmic800.copy(alpha = 0.5f))
+                                TimingRow("Rahu Kaal", data.rahuKaal, MaterialTheme.colorScheme.error)
+                                HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
                                 TimingRow("Yamaganda", data.yamaganda, Warning)
-                                HorizontalDivider(color = Cosmic800.copy(alpha = 0.5f))
+                                HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
                                 TimingRow("Gulika", data.gulika, Warning)
                             }
                         }
@@ -253,12 +241,12 @@ fun PanchangScreen(
                     }
                     showDatePicker = false
                 }) {
-                    Text("OK", color = Saffron500)
+                    Text("OK", color = MaterialTheme.colorScheme.primary)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) {
-                    Text("Cancel", color = TextSecondary)
+                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         ) {
@@ -277,12 +265,12 @@ private fun PanchangRow(label: String, value: String) {
         Text(
             text = label,
             style = MaterialTheme.typography.bodyMedium,
-            color = TextTertiary
+            color = MaterialTheme.colorScheme.outline
         )
         Text(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.Medium
         )
     }
@@ -309,13 +297,13 @@ private fun TimingRow(
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextTertiary
+                color = MaterialTheme.colorScheme.outline
             )
         }
         Text(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
-            color = TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.Medium
         )
     }

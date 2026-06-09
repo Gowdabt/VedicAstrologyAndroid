@@ -52,17 +52,6 @@ import androidx.navigation.NavController
 import com.astrologyvedic.app.ui.components.ErrorState
 import com.astrologyvedic.app.ui.components.LoadingState
 import com.astrologyvedic.app.ui.components.ResultCard
-import com.astrologyvedic.app.ui.theme.BorderDark
-import com.astrologyvedic.app.ui.theme.Cosmic800
-import com.astrologyvedic.app.ui.theme.Cosmic950
-import com.astrologyvedic.app.ui.theme.Saffron400
-import com.astrologyvedic.app.ui.theme.Saffron500
-import com.astrologyvedic.app.ui.theme.SurfaceCard
-import com.astrologyvedic.app.ui.theme.SurfaceCardElevated
-import com.astrologyvedic.app.ui.theme.SurfaceDark
-import com.astrologyvedic.app.ui.theme.TextPrimary
-import com.astrologyvedic.app.ui.theme.TextSecondary
-import com.astrologyvedic.app.ui.theme.TextTertiary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,16 +64,16 @@ fun PalmReadingScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(SurfaceDark)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         TopAppBar(
-            title = { Text("Palm Reading", color = TextPrimary) },
+            title = { Text("Palm Reading", color = MaterialTheme.colorScheme.onSurface) },
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Cosmic950)
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
         )
 
         when {
@@ -110,7 +99,7 @@ fun PalmReadingScreen(
                         Text(
                             text = uiState.overallReading,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = TextSecondary
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
 
@@ -144,14 +133,14 @@ fun PalmReadingScreen(
                     Text(
                         text = "Position your palm within the guide",
                         style = MaterialTheme.typography.titleMedium,
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "We'll analyze your palm lines using your birth chart data for accurate readings",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = TextSecondary,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center
                     )
 
@@ -162,7 +151,7 @@ fun PalmReadingScreen(
                         onClick = { viewModel.onImageCaptured() },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.filledTonalButtonColors(
-                            containerColor = Saffron500,
+                            containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = Color.White
                         ),
                         shape = MaterialTheme.shapes.medium
@@ -182,9 +171,9 @@ fun PalmReadingScreen(
                     OutlinedButton(
                         onClick = { viewModel.onGallerySelected() },
                         modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Saffron500),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary),
                         border = ButtonDefaults.outlinedButtonBorder.copy(
-                            brush = androidx.compose.ui.graphics.SolidColor(Saffron500)
+                            brush = androidx.compose.ui.graphics.SolidColor(MaterialTheme.colorScheme.primary)
                         ),
                         shape = MaterialTheme.shapes.medium
                     ) {
@@ -206,12 +195,13 @@ fun PalmReadingScreen(
 
 @Composable
 private fun PalmOutlineGuide() {
+    val primaryColor = MaterialTheme.colorScheme.primary
     Box(
         modifier = Modifier
             .fillMaxWidth(0.7f)
             .aspectRatio(0.75f)
-            .border(2.dp, BorderDark, RoundedCornerShape(16.dp))
-            .background(SurfaceCard, RoundedCornerShape(16.dp)),
+            .border(2.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainer, RoundedCornerShape(16.dp)),
         contentAlignment = Alignment.Center
     ) {
         Canvas(modifier = Modifier.fillMaxSize().padding(24.dp)) {
@@ -236,34 +226,34 @@ private fun PalmOutlineGuide() {
                 lineTo(w * 0.7f, h * 0.3f)
                 cubicTo(w * 0.9f, h * 0.4f, w * 0.9f, h * 0.7f, w * 0.7f, h)
             }
-            drawPath(palmPath, Saffron400.copy(alpha = 0.5f), style = strokeStyle)
+            drawPath(palmPath, primaryColor.copy(alpha = 0.5f), style = strokeStyle)
 
             // Heart line
             val heartLine = Path().apply {
                 moveTo(w * 0.2f, h * 0.35f)
                 cubicTo(w * 0.35f, h * 0.3f, w * 0.55f, h * 0.28f, w * 0.75f, h * 0.32f)
             }
-            drawPath(heartLine, Saffron500.copy(alpha = 0.7f), style = Stroke(width = 1.5f))
+            drawPath(heartLine, primaryColor.copy(alpha = 0.7f), style = Stroke(width = 1.5f))
 
             // Head line
             val headLine = Path().apply {
                 moveTo(w * 0.2f, h * 0.42f)
                 cubicTo(w * 0.35f, h * 0.44f, w * 0.5f, h * 0.46f, w * 0.65f, h * 0.48f)
             }
-            drawPath(headLine, Saffron500.copy(alpha = 0.7f), style = Stroke(width = 1.5f))
+            drawPath(headLine, primaryColor.copy(alpha = 0.7f), style = Stroke(width = 1.5f))
 
             // Life line
             val lifeLine = Path().apply {
                 moveTo(w * 0.25f, h * 0.3f)
                 cubicTo(w * 0.2f, h * 0.5f, w * 0.22f, h * 0.7f, w * 0.35f, h * 0.85f)
             }
-            drawPath(lifeLine, Saffron500.copy(alpha = 0.7f), style = Stroke(width = 1.5f))
+            drawPath(lifeLine, primaryColor.copy(alpha = 0.7f), style = Stroke(width = 1.5f))
         }
 
         Text(
             text = "Place palm here",
             style = MaterialTheme.typography.bodySmall,
-            color = TextTertiary,
+            color = MaterialTheme.colorScheme.outline,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 8.dp)
@@ -275,7 +265,7 @@ private fun PalmOutlineGuide() {
 private fun PalmLineCard(line: PalmLine) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = SurfaceCardElevated),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
         shape = MaterialTheme.shapes.medium
     ) {
         Column(
@@ -286,20 +276,20 @@ private fun PalmLineCard(line: PalmLine) {
             Text(
                 text = line.name,
                 style = MaterialTheme.typography.titleSmall,
-                color = Saffron400,
+                color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = line.description,
                 style = MaterialTheme.typography.bodySmall,
-                color = TextTertiary
+                color = MaterialTheme.colorScheme.outline
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = line.interpretation,
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextSecondary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

@@ -31,15 +31,15 @@ fun MeditationScreen(
     val uiState by viewModel.uiState.collectAsState()
     var showSoundSelector by remember { mutableStateOf(false) }
 
-    Column(modifier = Modifier.fillMaxSize().background(SurfaceDark)) {
+    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)) {
         TopAppBar(
-            title = { Text("Meditation", color = TextPrimary) },
+            title = { Text("Meditation", color = MaterialTheme.colorScheme.onSurface) },
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Cosmic950)
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
         )
 
         Column(
@@ -49,7 +49,7 @@ fun MeditationScreen(
         ) {
             // Duration selector circles
             if (!uiState.isRunning && !uiState.isComplete) {
-                Text("Select Duration", style = MaterialTheme.typography.titleMedium, color = TextSecondary)
+                Text("Select Duration", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     viewModel.durations.forEach { minutes ->
@@ -57,13 +57,13 @@ fun MeditationScreen(
                             modifier = Modifier
                                 .size(64.dp)
                                 .clip(CircleShape)
-                                .background(if (uiState.selectedDuration == minutes) Saffron500 else SurfaceCardElevated)
+                                .background(if (uiState.selectedDuration == minutes) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHigh)
                                 .clickable { viewModel.selectDuration(minutes) },
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 "${minutes}m",
-                                color = if (uiState.selectedDuration == minutes) Color.White else TextPrimary,
+                                color = if (uiState.selectedDuration == minutes) Color.White else MaterialTheme.colorScheme.onSurface,
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -73,7 +73,7 @@ fun MeditationScreen(
 
                 // Sound selector
                 TextButton(onClick = { showSoundSelector = true }) {
-                    Text("Sound: ${uiState.selectedSound}", color = Saffron400)
+                    Text("Sound: ${uiState.selectedSound}", color = MaterialTheme.colorScheme.primary)
                 }
             } else {
                 Spacer(modifier = Modifier.height(32.dp))
@@ -86,12 +86,12 @@ fun MeditationScreen(
                 if (uiState.isComplete) {
                     Text("Namaste", style = MaterialTheme.typography.displaySmall, color = Success, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("Session Complete", style = MaterialTheme.typography.titleMedium, color = TextSecondary)
+                    Text("Session Complete", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 } else {
                     Text(
                         text = String.format("%02d:%02d", minutes, seconds),
                         style = MaterialTheme.typography.displayLarge.copy(fontSize = 72.sp),
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Light
                     )
                 }
@@ -104,15 +104,15 @@ fun MeditationScreen(
                 if (uiState.isRunning || uiState.remainingSeconds < uiState.selectedDuration * 60) {
                     IconButton(
                         onClick = { viewModel.reset() },
-                        modifier = Modifier.size(56.dp).clip(CircleShape).background(SurfaceCardElevated)
+                        modifier = Modifier.size(56.dp).clip(CircleShape).background(MaterialTheme.colorScheme.surfaceContainerHigh)
                     ) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Reset", tint = TextPrimary)
+                        Icon(Icons.Default.Refresh, contentDescription = "Reset", tint = MaterialTheme.colorScheme.onSurface)
                     }
                 }
 
                 IconButton(
                     onClick = { viewModel.toggleTimer() },
-                    modifier = Modifier.size(80.dp).clip(CircleShape).background(Saffron500)
+                    modifier = Modifier.size(80.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primary)
                 ) {
                     Icon(
                         if (uiState.isRunning) Icons.Default.Pause else Icons.Default.PlayArrow,
@@ -130,7 +130,7 @@ fun MeditationScreen(
     if (showSoundSelector) {
         AlertDialog(
             onDismissRequest = { showSoundSelector = false },
-            title = { Text("Ambient Sound", color = TextPrimary) },
+            title = { Text("Ambient Sound", color = MaterialTheme.colorScheme.onSurface) },
             text = {
                 Column {
                     viewModel.sounds.forEach { sound ->
@@ -138,13 +138,13 @@ fun MeditationScreen(
                             onClick = { viewModel.selectSound(sound); showSoundSelector = false },
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(sound, color = if (sound == uiState.selectedSound) Saffron500 else TextSecondary, modifier = Modifier.fillMaxWidth())
+                            Text(sound, color = if (sound == uiState.selectedSound) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.fillMaxWidth())
                         }
                     }
                 }
             },
-            confirmButton = { TextButton(onClick = { showSoundSelector = false }) { Text("Cancel", color = TextSecondary) } },
-            containerColor = SurfaceCardElevated
+            confirmButton = { TextButton(onClick = { showSoundSelector = false }) { Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant) } },
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
         )
     }
 }
